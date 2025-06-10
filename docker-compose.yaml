@@ -89,3 +89,5 @@ networks:
 
 volumes:
   mysql_data:
+    external: true
+    name: skills2025_mysql_data
