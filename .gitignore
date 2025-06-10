@@ -79,3 +79,5 @@ Thumbs.db
 # Ignore la db MySQL
 /data/mysql/
 /mysql/data/
+
+.vscode/
