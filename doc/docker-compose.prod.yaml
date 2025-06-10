@@ -1,0 +1,62 @@
+services:
+  api:
+    container_name: skills2025_api
+    image: skills2025_api:${VERSION}
+    environment:
+      APP_ENV: prod
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+    volumes:
+      - ./api:/var/www/api:ro
+    networks:
+      - skills2025_network
+    depends_on:
+      - mysql
+
+  front:
+    container_name: skills2025_front
+    image: skills2025_front:${VERSION}
+    environment:
+      NODE_ENV: production
+    volumes:
+      - ./front:/var/www/html:ro
+    networks:
+      - skills2025_network
+
+  nginx:
+    image: nginx:stable
+    container_name: skills2025_nginx
+    volumes:
+      - ./nginx/prod:/etc/nginx/conf.d:ro
+      - ./api/public:/var/www/api/public:ro
+      - ./front/dist:/var/www/html:ro
+      - ./certs:/etc/nginx/certs:ro # SSL certs si activé
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - api
+      - front
+    networks:
+      - skills2025_network
+
+  mysql:
+    image: mysql:8.0
+    container_name: skills2025_mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - skills2025_network
+
+networks:
+  skills2025_network:
+    driver: bridge
+
+volumes:
+  mysql_data:

@@ -1,0 +1,3 @@
+CREATE USER IF NOT EXISTS 'skills'@'%' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON skills2025.* TO 'skills'@'%';
+FLUSH PRIVILEGES;

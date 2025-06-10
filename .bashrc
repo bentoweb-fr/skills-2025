@@ -1,0 +1,1 @@
+alias sf='docker exec -it -w /var/www/api skills2025_api php bin/console'

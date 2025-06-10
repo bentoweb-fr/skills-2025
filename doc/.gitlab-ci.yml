@@ -1,0 +1,14 @@
+stages:
+  - deploy
+
+variables:
+  PROD_HOST: user@your-prod-server.com
+  PROJECT_DIR: /var/www/skills2025
+
+deploy_prod:
+  stage: deploy
+  only:
+    - prod
+  script:
+    - echo "Déploiement de la branche 'prod' sur $PROD_HOST"
+    - ssh $PROD_HOST 'bash -s' < scripts/deploy.sh
