@@ -3,6 +3,7 @@ import vue from "@vitejs/plugin-vue";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath, URL } from "node:url";
+import oxlintPlugin from "vite-plugin-oxlint";
 
 console.log(path.resolve(__dirname, "/public"));
 
@@ -20,7 +21,7 @@ export default defineConfig({
     },
   },
 
-  plugins: [vue()],
+  plugins: [vue(), oxlintPlugin()],
 
   root: path.resolve(__dirname, "src"), // Répertoire de base pour les sources
 
