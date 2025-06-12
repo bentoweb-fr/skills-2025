@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath, URL } from "node:url";
+// import { fileURLToPath, URL } from "node:url";
 import oxlintPlugin from "vite-plugin-oxlint";
 
 console.log(path.resolve(__dirname, "/public"));
@@ -12,10 +12,7 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: 5173,
-    // https: true,
     https: {
-      // key: fs.readFileSync(path.resolve(__dirname + '../nginx/ssl/', 'skills2025.local.key')),
-      // cert: fs.readFileSync(path.resolve(__dirname + '../nginx/ssl/', 'skills2025.local.crt')),
       key: fs.readFileSync("../nginx/ssl/skills2025.local.key"),
       cert: fs.readFileSync("../nginx/ssl/skills2025.local.crt"),
     },
@@ -34,8 +31,10 @@ export default defineConfig({
     alias: {
       // "@": fileURLToPath(new URL("./src", import.meta.url)),
       // "@": "./src",
-      "@css": fileURLToPath(new URL("./src/assets/scss", import.meta.url)),
-      "@js": fileURLToPath(new URL("./src/assets/js", import.meta.url)),
+      // "@css": fileURLToPath(new URL("./src/assets/scss", import.meta.url)),
+      // "@js": fileURLToPath(new URL("./src/assets/js", import.meta.url)),
+      "@js": path.resolve(__dirname, "src/assets/js"),
+      "@css": path.resolve(__dirname, "src/assets/scss"),
       // "@": path.resolve(__dirname, "src"),
     },
   },

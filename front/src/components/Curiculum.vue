@@ -41,7 +41,7 @@
             <p>(+ conditions de travail : encadrement, autonomie, description du rôle)</p>
             <p>{{ project.shortDescription }}</p>
             <h3>Compétences développées</h3>
-            <ul v-for="tech in project.technologies" :key="tech">
+            <ul v-for="tech in project.technologies" :key="tech.name">
               <li>{{ tech.name }}</li>
             </ul>
             <div class="plus">
@@ -58,8 +58,17 @@
 import { ref, reactive, onMounted, watch, nextTick } from "vue";
 import { ScrollZoomService } from "@js/services/ScrollZoomService.js";
 
+interface Project {
+  id: number;
+  title: string;
+  year: string;
+  shortDescription: string;
+  longDescription: string;
+  technologies: { name: string }[];
+}
+
 const projects = reactive({
-  values: [],
+  values: [] as Project[],
 });
 
 onMounted(() => {
@@ -92,7 +101,7 @@ ref() : Pour les valeurs primitives.
 reactive() : Pour les objets complexes.
 ** Accès aux valeurs :
 ref: count.value
-reactive: accès direct comme user.name.
+reactive: accès direct comme uscriptme.
 */
 
 // const props = defineProps({ projects: Object });

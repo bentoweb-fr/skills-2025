@@ -1,0 +1,10 @@
+
+# services:
+#   frontend:
+#     image: myregistry/frontend:latest
+#     ...
+
+#   backend:
+#     image: myregistry/backend:latest
+#     ...
+

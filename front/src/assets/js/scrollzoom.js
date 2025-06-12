@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const scrollContainer = document.querySelector(".boxcart");
   const boxes = scrollContainer.querySelectorAll(".box");
   // console.log("boxes", boxes);
-  let activeBox = null;
+  // let activeBox = null;
   // const zoomOff = 0.8;
   const wildLimit = 150;
   const marginOn = 0;
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // boxInner.style.paddingRight = `${marginOn}px`;
             boxInner.style.marginLeft = `${marginOn}px`;
             boxInner.style.marginRight = `${marginOn}px`;
-            activeBox = box;
+            // activeBox = box;
             box.classList.add("is--active");
 
             // const date = box.dataset.date;
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const dateBlock = document.querySelector(".skills-date");
   const currentDate = dateBlock.querySelector(".current-date");
   const nextDate = dateBlock.querySelector(".next-date");
-  const datesCart = dateBlock.querySelector(".dates-cart");
+  // const datesCart = dateBlock.querySelector(".dates-cart");
   function dateMoveTo(box = null) {
     if (!box) {
       return false;

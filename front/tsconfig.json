@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "./public/assets/js",
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -9,13 +10,16 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["src/*"]
+      // "@/*": ["src/*"],
+      "@js/*": ["assets/js/*"],
+      "@css/*": ["assets/scss/*"]
     },
-    "types": ["vite/client"],
+    "types": ["vite/client", "vue"],
     "allowJs": true
   },
+  "include": ["src/**/*.ts", "src/**/*.vue"],
   // "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue"],
   "exclude": ["node_modules"]
 }
