@@ -3,7 +3,7 @@
   <!-- <Curiculum :projects="projects" /> -->
 </template>
 
-<script setup>
+<script lang="ts" setup>
 /**
  * CV interactif
  * CGV en tant que freelance
@@ -13,10 +13,11 @@
  * Informer : Ce qui guide un choix technique
  */
 
-// import HelloWorld from "./components/HelloWorld.vue";
 import { ref, onMounted } from "vue";
-
 import Curiculum from "./components/Curiculum.vue";
+
+// import HelloWorld from "./components/HelloWorld.vue";
+
 // document.title = "Look Ma!";
 // setup(() => {
 // console.log("HelloWorld");

@@ -54,7 +54,7 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ref, reactive, onMounted, watch, nextTick } from "vue";
 import { ScrollZoomService } from "@js/services/ScrollZoomService.js";
 
