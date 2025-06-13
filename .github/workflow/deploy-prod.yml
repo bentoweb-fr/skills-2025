@@ -7,8 +7,9 @@ on:
 
 env:
   GHCR_REGISTRY: ghcr.io
-  GHCR_BACKEND_IMAGE: ghcr.io/${{ secrets.GHCR_USER }}/skills2025-backend
-  GHCR_FRONTEND_IMAGE: ghcr.io/${{ secrets.GHCR_USER }}/skills2025-frontend
+  GHCR_API_IMAGE: ghcr.io/${{ secrets.GHCR_USER }}/skills2025-api
+  GHCR_FRONT_IMAGE: ghcr.io/${{ secrets.GHCR_USER }}/skills2025-front
+  GHCR_NGINX_IMAGE: ghcr.io/${{ secrets.GHCR_USER }}/skills2025-nginx
 
 jobs:
   build-and-push:
@@ -21,15 +22,20 @@ jobs:
       - name: 🔐 Login to GHCR
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USER }} --password-stdin
 
-      - name: 🛠️ Build & Push Backend
+      - name: 🛠️ Build & Push API
         run: |
-          docker build -t $GHCR_BACKEND_IMAGE:latest ./backend
-          docker push $GHCR_BACKEND_IMAGE:latest
+          docker build -t $GHCR_API_IMAGE:latest ./api
+          docker push $GHCR_API_IMAGE:latest
 
       - name: 🛠️ Build & Push Frontend
         run: |
-          docker build -t $GHCR_FRONTEND_IMAGE:latest ./frontend
-          docker push $GHCR_FRONTEND_IMAGE:latest
+          docker build -t $GHCR_FRONT_IMAGE:latest ./front
+          docker push $GHCR_FRONT_IMAGE:latest
+
+      - name: 🛠️ Build & Push NGINX
+        run: |
+          docker build -t $GHCR_NGINX_IMAGE:latest ./nginx
+          docker push $GHCR_NGINX_IMAGE:latest
 
   deploy:
     name: 🚀 Deploy to Production Server
@@ -45,8 +51,8 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} << EOF
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USER }} --password-stdin
-            docker pull $GHCR_BACKEND_IMAGE:latest
-            docker pull $GHCR_FRONTEND_IMAGE:latest
+            docker pull $GHCR_API_IMAGE:latest
+            docker pull $GHCR_FRONT_IMAGE:latest
             cd /home/${{ secrets.PROD_SSH_USER }}/skills2025
             docker compose -f docker-compose.prod.yml up -d
           EOF
