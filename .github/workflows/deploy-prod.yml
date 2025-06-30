@@ -61,9 +61,9 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} << EOF
           echo "${{ secrets.REGISTRY_TOKEN }}" | docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} --password-stdin
-          docker pull $GHCR_NGINX_IMAGE:latest
+          sudo docker pull $GHCR_NGINX_IMAGE:latest
           cd /home/${{ secrets.PROD_SSH_USER }}/www/skills2025
-          docker compose -f docker-compose.prod.yml up -d
+          docker compose -f docker-compose.prod.yaml up -d
           EOF
 
 # docker pull $GHCR_API_IMAGE:latest
