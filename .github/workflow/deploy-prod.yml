@@ -2,8 +2,7 @@ name: 🚀 Build & Deploy to Prod via GHCR
 
 on:
   push:
-    branches:
-      - prod
+    branches: [ "prod" ]
 
 env:
   GHCR_REGISTRY: ghcr.io
@@ -12,7 +11,7 @@ env:
   GHCR_NGINX_IMAGE: ghcr.io/${{ secrets.GHCR_USER }}/skills2025-nginx
 
 jobs:
-  build-and-push:
+  build:
     name: 🏗️ Build & Push Images
     runs-on: ubuntu-latest
     steps:
