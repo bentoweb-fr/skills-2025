@@ -50,7 +50,7 @@ services:
 
   nginx:
     # image: nginx:stable
-    image: myregistry/nginx:latest
+    image: ghcr.io/${REGISTRY_USER}/skills2025-nginx:latest
     container_name: skills2025_nginx
     volumes:
       #   - ./api:/var/www/api
