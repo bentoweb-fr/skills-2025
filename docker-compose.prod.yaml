@@ -49,8 +49,8 @@ services:
   #     - "3000:3000"
 
   nginx:
-    # image: nginx:stable
-    image: ghcr.io/${REGISTRY_USER}/skills2025-nginx:latest
+    image: skills2025-nginx:latest
+    # image: ghcr.io/${REGISTRY_USER}/skills2025-nginx:latest
     container_name: skills2025_nginx
     volumes:
       #   - ./api:/var/www/api
