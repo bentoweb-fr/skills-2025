@@ -44,6 +44,9 @@ jobs:
     steps:
       - name: 🧾 Checkout
         uses: actions/checkout@v3
+
+      - name: 🔐 Login to GHCR
+        run: echo "${{ secrets.REGISTRY_TOKEN }}" | docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} --password-stdin
         
       - name: 🔐 Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
