@@ -33,7 +33,7 @@ jobs:
 
       - name: 🛠️ Build & Push NGINX
         run: |
-          docker build -t $GHCR_NGINX_IMAGE:latest ./nginx
+          docker build -t $GHCR_NGINX_IMAGE:latest -f ./docker/nginx/Dockerfile ./nginx
           docker push $GHCR_NGINX_IMAGE:latest
 
   # deploy:
