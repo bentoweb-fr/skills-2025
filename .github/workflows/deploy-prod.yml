@@ -8,8 +8,8 @@ env:
   GHCR_REGISTRY: ghcr.io
   GHCR_API_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025-api
   GHCR_FRONT_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025-front
-  # GHCR_NGINX_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025-nginx
-  GHCR_NGINX_IMAGE: skills2025-nginx
+  GHCR_NGINX_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025-nginx
+  # GHCR_NGINX_IMAGE: skills2025-nginx
 
 jobs:
   build-and-push:
@@ -70,8 +70,8 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} << EOF
           echo "${{ secrets.REGISTRY_TOKEN }}" | docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} --password-stdin
-          docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025-nginx:latest
           cd /home/${{ secrets.PROD_SSH_USER }}/www/skills2025
+          REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025-nginx:latest
           REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker compose -f docker-compose.prod.yaml up -d
           EOF
 
