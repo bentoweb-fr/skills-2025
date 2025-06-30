@@ -9,97 +9,86 @@
 #     ...
 
 services:
-  api:
-    container_name: skills2025_api
-    image: myregistry/api:latest
-    environment:
-      PUID: 1000
-      PGID: 1000
-      APP_ENV: dev
-    build:
-      context: ./api
-      dockerfile: ../docker/api/Dockerfile
-    volumes:
-      - ./api:/var/www/api
-    networks:
-      - skills2025_network
-    expose:
-      - "9000"
-    depends_on:
-      - mysql
+  # api:
+  #   container_name: skills2025_api
+  #   image: myregistry/api:latest
+  #   environment:
+  #     PUID: 1000
+  #     PGID: 1000
+  #     APP_ENV: dev
+  #   build:
+  #     context: ./api
+  #     dockerfile: ../docker/api/Dockerfile
+  #   volumes:
+  #     - ./api:/var/www/api
+  #   networks:
+  #     - skills2025_network
+  #   expose:
+  #     - "9000"
+  #   depends_on:
+  #     - mysql
 
-  front:
-    container_name: skills2025_front
-    image: myregistry/front:latest
-    build:
-      context: ./front
-      dockerfile: ../docker/front/Dockerfile
-    volumes:
-      - ./front:/var/www/html
-    environment:
-      PUID: 1000
-      PGID: 1000
-      NODE_ENV: dev
-      VITE_API_URL: https://api.skills2025.local
-      SHELL: /bin/ash # Fix chokidar-cli error
-    restart: unless-stopped
-    networks:
-      - skills2025_network
-    ports:
-      - "3000:3000"
+  # front:
+  #   container_name: skills2025_front
+  #   image: myregistry/front:latest
+  #   build:
+  #     context: ./front
+  #     dockerfile: ../docker/front/Dockerfile
+  #   volumes:
+  #     - ./front:/var/www/html
+  #   environment:
+  #     PUID: 1000
+  #     PGID: 1000
+  #     NODE_ENV: dev
+  #     VITE_API_URL: https://api.skills2025.local
+  #     SHELL: /bin/ash # Fix chokidar-cli error
+  #   restart: unless-stopped
+  #   networks:
+  #     - skills2025_network
+  #   ports:
+  #     - "3000:3000"
 
   nginx:
     image: nginx:stable
     container_name: skills2025_nginx
     volumes:
-      - ./api:/var/www/api
-      - ./front:/var/www/html
+      #   - ./api:/var/www/api
+      #   - ./front:/var/www/html
       - ./nginx:/etc/nginx
     networks:
       - skills2025_network
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      - api
-      - front
+# depends_on:
+#   - api
+#   - front
 
-  mysql:
-    image: mysql:8.0
-    restart: always
-    environment:
-      MYSQL_DATABASE: skills2025
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: mypassword
-      MYSQL_ROOT_PASSWORD: rootpassword
-    volumes:
-      - db_data:/var/lib/mysql
-    # image: mysql:8.0
-    # container_name: skills2025_mysql
-    # environment:
-    #   PUID: 1000
-    #   PGID: 1000
-    #   MYSQL_ROOT_PASSWORD: root
-    # volumes:
-    #   - mysql_data:/var/lib/mysql
-    #   - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
-    # networks:
-    #   - skills2025_network
+# mysql:
+#   image: mysql:8.0
+#   restart: always
+#   environment:
+#     MYSQL_DATABASE: skills2025
+#     MYSQL_USER: myuser
+#     MYSQL_PASSWORD: mypassword
+#     MYSQL_ROOT_PASSWORD: rootpassword
+#   volumes:
+#     - db_data:/var/lib/mysql
 
-  phpmyadmin:
-    image: phpmyadmin:5.2.1
-    container_name: skills2025_phpmyadmin
-    restart: always
-    ports:
-      - 8022:80
-    links:
-      - mysql:mysql
-    environment:
-      PMA_HOST: mysql
-    depends_on:
-      - mysql
-    networks:
-      - skills2025_network
+# phpmyadmin:
+#   image: phpmyadmin:5.2.1
+#   container_name: skills2025_phpmyadmin
+#   restart: always
+#   ports:
+#     - 8022:80
+#   links:
+#     - mysql:mysql
+#   environment:
+#     PMA_HOST: mysql
+#   depends_on:
+#     - mysql
+#   networks:
+#     - skills2025_network
 
 networks:
   skills2025_network:
