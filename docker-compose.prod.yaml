@@ -49,7 +49,8 @@ services:
   #     - "3000:3000"
 
   nginx:
-    image: nginx:stable
+    # image: nginx:stable
+    image: myregistry/nginx:latest
     container_name: skills2025_nginx
     volumes:
       #   - ./api:/var/www/api
