@@ -47,6 +47,16 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
 
+      - name: 📄 Envoyer .env.prod sur le serveur
+        run: |
+          ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "mkdir -p ~/skills2025"
+          cat <<EOF | ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "cat > ~/skills2025/.env.prod"
+# MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+# MYSQL_USER=skillsuser
+# MYSQL_PASSWORD=skillsPass
+# MYSQL_DATABASE=skillsdb
+# EOF
+
       - name: 🚀 Pull Images & Restart Docker
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} << EOF
