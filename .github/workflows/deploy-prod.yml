@@ -57,6 +57,10 @@ jobs:
 # MYSQL_DATABASE=skillsdb
 # EOF
 
+      - name: 📄 Copier docker-compose.prod.yaml sur le serveur
+        run: |
+          scp -o StrictHostKeyChecking=no docker-compose.prod.yaml ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml
+
       - name: 🚀 Pull Images & Restart Docker
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} << EOF
