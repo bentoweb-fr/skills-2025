@@ -5,22 +5,33 @@ on:
     branches: [ "prod" ]
 
 env:
-  GHCR_REGISTRY: ghcr.io
-  GHCR_API_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025-api
-  GHCR_FRONT_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025-front
+  # GHCR_REGISTRY: ghcr.io
+  # GHCR_API_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025-api
+  # GHCR_FRONT_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025-front
   GHCR_NGINX_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025-nginx
   # GHCR_NGINX_IMAGE: skills2025-nginx
 
+
+
 jobs:
-  build-and-push:
-    name: 🏗️ Build & Push Images
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: 🧾 Checkout
-        uses: actions/checkout@v3
+    - name: 🧾 Checkout
+      uses: actions/checkout@v4
 
-      - name: 🔐 Login to GHCR
-        run: echo "${{ secrets.REGISTRY_TOKEN }}" | docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} --password-stdin
+
+# jobs:
+  # build-and-push:
+    # name: 🏗️ Build & Push Images
+    # runs-on: ubuntu-latest
+    # steps:
+      # - name: 🧾 Checkout
+        # uses: actions/checkout@v3
+
+      # - name: 🔐 Login to GHCR
+      #   run: echo "${{ secrets.REGISTRY_TOKEN }}" | docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} --password-stdin
 
   #     - name: 🛠️ Build & Push API
   #       run: |
@@ -32,26 +43,26 @@ jobs:
   #         docker build -t $GHCR_FRONT_IMAGE:latest ./front
   #         docker push $GHCR_FRONT_IMAGE:latest
 
-      - name: 🛠️ Build & Push NGINX
-        run: |
-          docker build -t $GHCR_NGINX_IMAGE:latest -f ./docker/nginx/Dockerfile ./nginx
-          docker push $GHCR_NGINX_IMAGE:latest
+      # - name: 🛠️ Build & Push NGINX
+      #   run: |
+      #     docker build -t $GHCR_NGINX_IMAGE:latest -f ./docker/nginx/Dockerfile ./nginx
+      #     docker push $GHCR_NGINX_IMAGE:latest
 
-  deploy:
-    name: 🚀 Deploy to Production Server
-    runs-on: ubuntu-latest
-    needs: build-and-push
-    steps:
-      - name: 🧾 Checkout
-        uses: actions/checkout@v3
+  # deploy:
+  #   name: 🚀 Deploy to Production Server
+  #   runs-on: ubuntu-latest
+  #   needs: build-and-push
+  #   steps:
+      # - name: 🧾 Checkout
+      #   uses: actions/checkout@v3
 
-      - name: 🔐 Login to GHCR
-        run: echo "${{ secrets.REGISTRY_TOKEN }}" | docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} --password-stdin
+      # - name: 🔐 Login to GHCR
+      #   run: echo "${{ secrets.REGISTRY_TOKEN }}" | docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} --password-stdin
         
-      - name: 🔐 Setup SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
+      # - name: 🔐 Setup SSH
+      #   uses: webfactory/ssh-agent@v0.9.0
+        # with:
+        #   ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
 
     #   - name: 📄 Envoyer .env.prod sur le serveur
     #     run: |
@@ -64,19 +75,19 @@ jobs:
 # MYSQL_DATABASE=skillsdb
 # EOF
 
-      - name: 📄 Copier docker-compose.prod.yaml sur le serveur
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "mkdir -p /home/${{ secrets.PROD_SSH_USER }}/www/skills2025"
-          scp -o StrictHostKeyChecking=no docker-compose.prod.yaml ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml
+      # - name: 📄 Copier docker-compose.prod.yaml sur le serveur
+      #   run: |
+      #     ssh -o StrictHostKeyChecking=no ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "mkdir -p /home/${{ secrets.PROD_SSH_USER }}/www/skills2025"
+      #     scp -o StrictHostKeyChecking=no docker-compose.prod.yaml ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml
 
-      - name: 🚀 Pull Images & Restart Docker
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} << EOF
-          echo "${{ secrets.REGISTRY_TOKEN }}" | docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} --password-stdin
-          cd /home/${{ secrets.PROD_SSH_USER }}/www/skills2025
-          REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025-nginx:latest
-          REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker compose -f docker-compose.prod.yaml up -d
-          EOF
+      # - name: 🚀 Pull Images & Restart Docker
+      #   run: |
+      #     ssh -o StrictHostKeyChecking=no ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} << EOF
+      #     echo "${{ secrets.REGISTRY_TOKEN }}" | docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} --password-stdin
+      #     cd /home/${{ secrets.PROD_SSH_USER }}/www/skills2025
+      #     REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025-nginx:latest
+      #     REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker compose -f docker-compose.prod.yaml up -d
+      #     EOF
 
 # docker pull $GHCR_API_IMAGE:latest
 # docker pull $GHCR_FRONT_IMAGE:latest
