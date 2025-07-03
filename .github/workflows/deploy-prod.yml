@@ -38,6 +38,7 @@ jobs:
 
   front_deploy: 
     name: Deploy Front
+    needs: front_build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -50,7 +51,7 @@ jobs:
       - name: Déployer sur le PS
         run: | 
           eval $(ssh-agent -s)
-          ssh-add - <<< ${{ secrets.PROD_SSH_KEY }}
+          ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           scp -r ./front/public ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/var/www/html
