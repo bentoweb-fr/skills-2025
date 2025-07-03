@@ -20,6 +20,7 @@ jobs:
           # context: ./front
       - run: | 
           cd front
+          npm install
           npm run build
           docker build -t $GHCR_FRONT_IMAGE ./public
           docker push $GHCR_FRONT_IMAGE
