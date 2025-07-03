@@ -44,7 +44,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Download Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/download-artifact@v4
         with:
           name: front-artifact
           path: ./front/public
