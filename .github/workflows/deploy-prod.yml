@@ -4,13 +4,17 @@ on:
   push:
     branches: [ "prod" ]
 
-env:
-  GHCR_FRONT_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025/front:latest
+# env:
+  # GHCR_FRONT_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025/front:latest
 
 jobs:
   front_build:
     name: Build Front
     runs-on: ubuntu-latest
+    defaults:
+      run: 
+        working-directory: ./front
+
 # permissions: 
 # packages: write
     steps:
@@ -18,17 +22,36 @@ jobs:
         uses: actions/checkout@v4
       - name: Install NPM
         uses: actions/setup-node@v4
+        with: 
+          cache: "npm"
+          cache-dependency-path: ./front/package-lock.json
       - name: Build Vue+Vite
         run: | 
-          cd front
-          npm install
+          npm ci --cache .npm --prefer-offline
           npm run build
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: front-artefact
+          name: front-artifact
           path: ./front/public
           retention-days: 1
+
+  front_deploy: 
+    name: Deploy Front
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Déployer sur le PS
+        run: | 
+          eval $(ssh-agent -s)
+          ssh_add - <<< ${{ secrets.PROD_SSH_KEY }}
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
+          scp -r ./front/public ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/var/www/html
+# ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "cd /var/www/html"
+
+
 # with: 
 # context: ./front
 # - name: 🔐 Login to GHCR
