@@ -42,10 +42,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Download Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: front-artifact
+          path: ./front/public
       - name: Déployer sur le PS
         run: | 
           eval $(ssh-agent -s)
-          ssh_add - <<< ${{ secrets.PROD_SSH_KEY }}
+          ssh-add - <<< ${{ secrets.PROD_SSH_KEY }}
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           scp -r ./front/public ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/var/www/html
