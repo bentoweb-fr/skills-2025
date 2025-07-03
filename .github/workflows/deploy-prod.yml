@@ -11,17 +11,38 @@ jobs:
   front_build:
     name: Build Front
     runs-on: ubuntu-latest
-    # permissions: 
-      # packages: write
+# permissions: 
+# packages: write
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v4
-        # with: 
-          # context: ./front
-      - run: | 
+      - name: Checkout code
+        uses: actions/checkout@v3
+      # - uses: actions/checkout@v3
+      - name: Install NPM
+        uses: actions/setup-node@v4
+      - name: Build Vue+Vite
+        run: | 
           cd front
           npm install
           npm run build
-          docker build -t $GHCR_FRONT_IMAGE ./public
-          docker push $GHCR_FRONT_IMAGE
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: front-artefact
+          path: ./front/public
+          retention-days: 1
+# with: 
+# context: ./front
+# - name: 🔐 Login to GHCR
+# run: echo "${{ secrets.REGISTRY_TOKEN }}" | docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} --password-stdin
+      #   run: | 
+      #     cd front
+      #     npm install
+      #     npm run build
+      # - uses: actions/upload-artifact@v3
+      #   with:
+      #     name: front-artefact
+      #     path: ./front/public
+      #     retention-days: 1
+# docker build -t $GHCR_FRONT_IMAGE -f ./docker/front/Dockerfile ./public
+# docker push $GHCR_FRONT_IMAGE
         
