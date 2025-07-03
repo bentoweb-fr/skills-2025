@@ -11,10 +11,15 @@ jobs:
   front_build:
     name: Build Front
     runs-on: ubuntu-latest
+    # permissions: 
+      # packages: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v4
+        # with: 
+          # context: ./front
       - run: | 
+          cd front
           npm run build
           docker build -t $GHCR_FRONT_IMAGE ./public
           docker push $GHCR_FRONT_IMAGE
