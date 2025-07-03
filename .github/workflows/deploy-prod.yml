@@ -15,8 +15,7 @@ jobs:
 # packages: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-      # - uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install NPM
         uses: actions/setup-node@v4
       - name: Build Vue+Vite
@@ -25,7 +24,7 @@ jobs:
           npm install
           npm run build
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: front-artefact
           path: ./front/public
