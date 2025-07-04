@@ -54,7 +54,7 @@ jobs:
           ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
-          scp -r ./front/public/. ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/var/www/html
+          scp -r ./front/public/. ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:~/www/skills2025
 # ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "cd /var/www/html"
 
 
