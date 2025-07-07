@@ -4,8 +4,8 @@ on:
   push:
     branches: [ "prod" ]
 
-# env:
-  # GHCR_FRONT_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025/front:latest
+env:
+  GHCR_FRONT_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025/front:latest
 
 jobs:
   front_build:
@@ -39,10 +39,13 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_TOKEN }}
-      - name: Build Docker Image 
-        run: | 
-          docker build -t skills2025_front:latest -f ./docker/front/Dockerfile ./front/public
-          docker push skills2025_front:latest
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./front/public
+          file: ./docker/front/Dockerfile-ci
+          push: true
+          tags: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025_front:latest
 
   front_deploy: 
     name: Deploy Front
