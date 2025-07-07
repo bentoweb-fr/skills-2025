@@ -39,13 +39,28 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_TOKEN }}
-      - name: Build and Push Docker image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: ./front/public
           file: ./docker/front/Dockerfile-CI
+          # platforms: ${{ matrix.platform }}
+          # build-args: |
+            # "ARG_SITE_URL=${{ env.SITE_URL }}"
+            # "ARG_PLAUSIBLE_SCRIPT_URL=${{ env.PLAUSIBLE_SCRIPT_URL }}"
+            # "ARG_PLAUSIBLE_DOMAIN=${{ env.PLAUSIBLE_DOMAIN }}"
           push: true
-          tags: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025_front:latest
+          # tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+          # cache-to: type=inline
+
+
+      # - name: Build and Push Docker image
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: ./front/public
+      #     file: ./docker/front/Dockerfile-CI
+      #     push: true
+      #     tags: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025_front:latest
 
   front_deploy: 
     name: Deploy Front
