@@ -3,7 +3,7 @@ FROM node:18-alpine as build
 # WORKDIR /app
 WORKDIR /var/www/html
 
-COPY package.json package-lock.json ./
+COPY ./front/package.json package-lock.json ./
 
 # COPY ./ ./
 
