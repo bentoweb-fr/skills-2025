@@ -6,6 +6,7 @@ on:
 
 env:
   GHCR_FRONT_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025/front:latest
+  GHCR_API_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025/api:latest
 
 jobs:
   front_build:
@@ -14,7 +15,6 @@ jobs:
     defaults:
       run: 
         working-directory: ./front
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,23 +33,23 @@ jobs:
           name: front-artifact
           path: ./front/public
           retention-days: 1
-      - name: Login GHCR 
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ secrets.REGISTRY_USER }}
-          password: ${{ secrets.REGISTRY_TOKEN }}
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: ./front/public
-          file: ./docker/front/Dockerfile-CI
+      # - name: Login GHCR 
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ secrets.REGISTRY_USER }}
+      #     password: ${{ secrets.REGISTRY_TOKEN }}
+      # - name: Build and push Docker image
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: ./front/public
+      #     file: ./docker/front/Dockerfile-CI
           # platforms: ${{ matrix.platform }}
           # build-args: |
             # "ARG_SITE_URL=${{ env.SITE_URL }}"
             # "ARG_PLAUSIBLE_SCRIPT_URL=${{ env.PLAUSIBLE_SCRIPT_URL }}"
             # "ARG_PLAUSIBLE_DOMAIN=${{ env.PLAUSIBLE_DOMAIN }}"
-          push: true
+          # push: true
           # tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
           # cache-to: type=inline
 
@@ -61,6 +61,35 @@ jobs:
       #     file: ./docker/front/Dockerfile-CI
       #     push: true
       #     tags: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025_front:latest
+
+  api_build:
+    name: Build API
+    runs-on: ubuntu-latest
+    defaults:
+      run: 
+        working-directory: ./api
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Login GHCR 
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./api
+          file: ./docker/api/Dockerfile-CI
+          # platforms: ${{ matrix.platform }}
+          # build-args: |
+            # "ARG_SITE_URL=${{ env.SITE_URL }}"
+            # "ARG_PLAUSIBLE_SCRIPT_URL=${{ env.PLAUSIBLE_SCRIPT_URL }}"
+            # "ARG_PLAUSIBLE_DOMAIN=${{ env.PLAUSIBLE_DOMAIN }}"
+          push: true
+          tags: ${{ secrets.REGISTRY_USER }}/${{ env.GHCR_API_IMAGE }}:latest
+          # cache-to: type=inline
 
   front_deploy: 
     name: Deploy Front
