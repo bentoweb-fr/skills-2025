@@ -5,8 +5,8 @@ on:
     branches: [ "prod" ]
 
 env:
-  GHCR_FRONT_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025/front:latest
-  GHCR_API_IMAGE: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025/api:latest
+  GHCR_FRONT_IMAGE: skills2025/front
+  GHCR_API_IMAGE: skills2025/api
 
 jobs:
   front_build:
@@ -33,34 +33,6 @@ jobs:
           name: front-artifact
           path: ./front/public
           retention-days: 1
-      # - name: Login GHCR 
-      #   uses: docker/login-action@v3
-      #   with:
-      #     registry: ghcr.io
-      #     username: ${{ secrets.REGISTRY_USER }}
-      #     password: ${{ secrets.REGISTRY_TOKEN }}
-      # - name: Build and push Docker image
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     context: ./front/public
-      #     file: ./docker/front/Dockerfile-CI
-          # platforms: ${{ matrix.platform }}
-          # build-args: |
-            # "ARG_SITE_URL=${{ env.SITE_URL }}"
-            # "ARG_PLAUSIBLE_SCRIPT_URL=${{ env.PLAUSIBLE_SCRIPT_URL }}"
-            # "ARG_PLAUSIBLE_DOMAIN=${{ env.PLAUSIBLE_DOMAIN }}"
-          # push: true
-          # tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
-          # cache-to: type=inline
-
-
-      # - name: Build and Push Docker image
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     context: ./front/public
-      #     file: ./docker/front/Dockerfile-CI
-      #     push: true
-      #     tags: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025_front:latest
 
   api_build:
     name: Build API
@@ -82,14 +54,8 @@ jobs:
         with:
           context: ./api
           file: ./docker/api/Dockerfile-CI
-          # platforms: ${{ matrix.platform }}
-          # build-args: |
-            # "ARG_SITE_URL=${{ env.SITE_URL }}"
-            # "ARG_PLAUSIBLE_SCRIPT_URL=${{ env.PLAUSIBLE_SCRIPT_URL }}"
-            # "ARG_PLAUSIBLE_DOMAIN=${{ env.PLAUSIBLE_DOMAIN }}"
           push: true
-          tags: ${{ secrets.REGISTRY_USER }}/${{ env.GHCR_API_IMAGE }}:latest
-          # cache-to: type=inline
+          tags: ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_API_IMAGE }}:latest
 
   front_deploy: 
     name: Deploy Front
@@ -110,15 +76,15 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           # scp -r ./front/public/. ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:~/www/
-      - name: Login GHCR 
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ secrets.REGISTRY_USER }}
-          password: ${{ secrets.REGISTRY_TOKEN }}
-      - name: Download Docker Image skills2025/front
-        run: | 
-          docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025_front:latest
+      # - name: Login GHCR 
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ secrets.REGISTRY_USER }}
+      #     password: ${{ secrets.REGISTRY_TOKEN }}
+      # - name: Download Docker Image skills2025/front
+      #   run: | 
+      #     docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025_front:latest
 
   nginx_deploy:
     name: Deploy Nginx
@@ -155,3 +121,36 @@ jobs:
 # docker build -t $GHCR_FRONT_IMAGE -f ./docker/front/Dockerfile ./public
 # docker push $GHCR_FRONT_IMAGE
         
+
+
+
+
+
+      # - name: Login GHCR 
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ secrets.REGISTRY_USER }}
+      #     password: ${{ secrets.REGISTRY_TOKEN }}
+      # - name: Build and push Docker image
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: ./front/public
+      #     file: ./docker/front/Dockerfile-CI
+          # platforms: ${{ matrix.platform }}
+          # build-args: |
+            # "ARG_SITE_URL=${{ env.SITE_URL }}"
+            # "ARG_PLAUSIBLE_SCRIPT_URL=${{ env.PLAUSIBLE_SCRIPT_URL }}"
+            # "ARG_PLAUSIBLE_DOMAIN=${{ env.PLAUSIBLE_DOMAIN }}"
+          # push: true
+          # tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+          # cache-to: type=inline
+
+
+      # - name: Build and Push Docker image
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: ./front/public
+      #     file: ./docker/front/Dockerfile-CI
+      #     push: true
+      #     tags: ghcr.io/${{ secrets.REGISTRY_USER }}/skills2025_front:latest
