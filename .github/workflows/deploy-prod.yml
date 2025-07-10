@@ -176,6 +176,8 @@ jobs:
     needs: [nginx_deploy]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Copy docker-compose file to server
         run: |
           eval $(ssh-agent -s)
