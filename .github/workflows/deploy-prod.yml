@@ -154,7 +154,7 @@ jobs:
   
   nginx_deploy:
     name: Deploy Nginx
-    needs: [front_deploy, api_deploy]
+    needs: [nginx_build, front_deploy, api_deploy]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -171,8 +171,8 @@ jobs:
             "docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_TOKEN }} && \
             docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_NGINX_IMAGE }}:latest"
 
-  run_docker:
-    name: (Re)Run Docker
+  reboot:
+    name: Reboot
     needs: [nginx_deploy]
     runs-on: ubuntu-latest
     steps:
@@ -183,7 +183,7 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} \
-            cd ~/www/skills2025
+            cd /home/benoit/www/skills2025
             docker compose down && docker compose -f docker-compose.prod.yaml up -d
       
 # run: | 
