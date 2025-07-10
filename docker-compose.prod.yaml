@@ -1,7 +1,7 @@
 services:
   api:
     # container_name: skills2025_api
-    image: ghcr.io/bentoweb-fr/skills2025/api:latest
+    image: ghcr.io/bentoweb-fr/skills2025/api
     pull_policy: never
     environment:
       PUID: 1000
@@ -40,7 +40,7 @@ services:
   #     - "3000:3000"
 
   nginx:
-    image: ghcr.io/bentoweb-fr/skills2025-nginx:latest
+    image: ghcr.io/bentoweb-fr/skills2025-nginx
     pull_policy: never
     # image: ghcr.io/${REGISTRY_USER}/skills2025-nginx:latest
     # container_name: skills2025_nginx
@@ -66,7 +66,7 @@ services:
       MYSQL_PASSWORD: mypassword
       MYSQL_ROOT_PASSWORD: rootpassword
     volumes:
-      - db_data:/var/lib/mysql
+      - bentoweb_db_data:/var/lib/mysql
 
 # phpmyadmin:
 #   image: phpmyadmin:5.2.1
@@ -90,4 +90,4 @@ networks:
 volumes:
   db_data:
     external: true
-    name: skills2025_db_data
+    name: bentoweb_db_data
