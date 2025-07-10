@@ -96,6 +96,6 @@ networks:
     driver: bridge
 
 volumes:
-  mysql_data:
+  db_data:
     external: true
-    name: skills2025_mysql_data
+    name: skills2025_db_data
