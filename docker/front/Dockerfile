@@ -1,7 +1,7 @@
 FROM node:18-alpine as build
 
 # WORKDIR /app
-WORKDIR /var/www/html
+WORKDIR /var/www/front
 
 COPY package.json package-lock.json ./
 

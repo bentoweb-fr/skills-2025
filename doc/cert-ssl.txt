@@ -1,0 +1,23 @@
+openssl req -nodes -newkey rsa:2048 -sha256 -keyout myserver.key -out server.csr
+
+benoit@btwServer:~$ sudo certbot --nginx -d bentoweb.fr -d www.bentoweb.fr
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Requesting a certificate for bentoweb.fr and www.bentoweb.fr
+
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/bentoweb.fr/fullchain.pem
+Key is saved at: /etc/letsencrypt/live/bentoweb.fr/privkey.pem
+This certificate expires on 2025-10-08.
+These files will be updated when the certificate renews.
+Certbot has set up a scheduled task to automatically renew this certificate in the background.
+
+Deploying certificate
+Could not install certificate
+
+NEXT STEPS:
+
+- The certificate was saved, but could not be installed (installer: nginx). After fixing the error shown below, try installing it again by running:
+  certbot install --cert-name bentoweb.fr
+
+Could not automatically find a matching server block for bentoweb.fr. Set the `server_name` directive to use the Nginx installer.
+Ask for help or search for solutions at https://community.letsencrypt.org. See the logfile /var/log/letsencrypt/letsencrypt.log or re-run Certbot with -v for more details.

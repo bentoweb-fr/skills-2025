@@ -23,12 +23,12 @@ services:
       context: ./front
       dockerfile: ../docker/front/Dockerfile
     volumes:
-      - ./front:/var/www/html
+      - ./front:/var/www/front
     environment:
       PUID: 1000
       PGID: 1000
       NODE_ENV: dev
-      VITE_API_URL: https://api.skills2025.local
+      # VITE_API_URL: https://api.skills2025.local
       SHELL: /bin/ash # Fix chokidar-cli error
     restart: unless-stopped
     networks:
@@ -41,7 +41,7 @@ services:
     container_name: skills2025_nginx
     volumes:
       - ./api:/var/www/api
-      - ./front:/var/www/html
+      - ./front:/var/www/front
       - ./nginx:/etc/nginx
     networks:
       - skills2025_network

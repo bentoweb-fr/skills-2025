@@ -17,5 +17,5 @@ RUN apt-get update && apt-get install -y \
 # RUN chown -R www-data:www-data /var/www/html
 # RUN chmod -R 777 /var/www/html
 
-# Copier les fichiers du projet
-WORKDIR /var/www/html
+# ???
+WORKDIR /var/www/api
