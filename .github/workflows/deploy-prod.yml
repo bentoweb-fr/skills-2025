@@ -173,6 +173,7 @@ jobs:
 
   run_docker:
     name: (Re)Run Docker
+    needs: [nginx_deploy]
     runs-on: ubuntu-latest
     steps:
       - name : docker cmd
@@ -182,9 +183,8 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} \
-            docker compose down && docker compose up -d
-  #   needs: [nginx_deploy]
-    # runs-on: ubuntu-latest
+            cd ~/www/skills2025
+            docker compose down && docker compose -f docker-compose.prod.yaml up -d
       
 # run: | 
 # eval $(ssh-agent -s)

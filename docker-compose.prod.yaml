@@ -28,30 +28,30 @@ services:
     depends_on:
       - mysql
 
-  # front:
+  front:
   #   container_name: skills2025_front
-  #   image: myregistry/front:latest
+    image: skills2025/front:latest
   #   build:
   #     context: ./front
   #     dockerfile: ../docker/front/Dockerfile
-  #   volumes:
-  #     - ./front:/var/www/html
-  #   environment:
-  #     PUID: 1000
-  #     PGID: 1000
-  #     NODE_ENV: dev
+    volumes:
+      - ./front:/var/www/front
+    environment:
+      PUID: 1000
+      PGID: 1000
+      NODE_ENV: prod
   #     VITE_API_URL: https://api.skills2025.local
   #     SHELL: /bin/ash # Fix chokidar-cli error
-  #   restart: unless-stopped
-  #   networks:
-  #     - bentoweb_network
-  #   ports:
-  #     - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - bentoweb_network
+    ports:
+      - "3000:3000"
 
   nginx:
     image: skills2025-nginx:latest
     # image: ghcr.io/${REGISTRY_USER}/skills2025-nginx:latest
-    container_name: skills2025_nginx
+    # container_name: skills2025_nginx
     volumes:
       #   - ./api:/var/www/api
       - /var/www/front:/var/www/front
