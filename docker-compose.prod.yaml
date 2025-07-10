@@ -1,7 +1,7 @@
 services:
   api:
     # container_name: skills2025_api
-    image: skills2025/api:latest
+    image: ghcr.io/bentoweb-fr/skills2025/api:latest
     environment:
       PUID: 1000
       PGID: 1000
@@ -39,7 +39,7 @@ services:
   #     - "3000:3000"
 
   nginx:
-    image: skills2025-nginx:latest
+    image: ghcr.io/bentoweb-fr/skills2025-nginx:latest
     # image: ghcr.io/${REGISTRY_USER}/skills2025-nginx:latest
     # container_name: skills2025_nginx
     volumes:
