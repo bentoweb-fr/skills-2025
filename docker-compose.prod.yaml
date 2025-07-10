@@ -88,6 +88,6 @@ networks:
     driver: bridge
 
 volumes:
-  db_data:
+  bentoweb_db_data:
     external: true
     name: bentoweb_db_data
