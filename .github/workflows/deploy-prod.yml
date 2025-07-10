@@ -183,8 +183,7 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} \
-            cd /home/benoit/www/skills2025
-            docker compose down && docker compose -f docker-compose.prod.yaml up -d
+            cd /home/benoit/www/skills2025 && docker compose down && docker compose -f docker-compose.prod.yaml up -d
       
 # run: | 
 # eval $(ssh-agent -s)
