@@ -170,20 +170,20 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           scp ./docker-compose.prod.yaml ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/
-      - name: Vérifier la présence du fichier sur le serveur
-        run: |
-          eval $(ssh-agent -s)
-          ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
-          ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "ls -l /home/${{ secrets.PROD_SSH_USER }}/www/skills2025"
-      - name: Vérifier la version de Docker
-        run: |
-          eval $(ssh-agent -s)
-          ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
-          ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "docker --version && docker compose version || docker-compose --version"
+      # - name: Vérifier la présence du fichier sur le serveur
+      #   run: |
+      #     eval $(ssh-agent -s)
+      #     ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
+      #     mkdir -p ~/.ssh
+      #     ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
+      #     ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "ls -l /home/${{ secrets.PROD_SSH_USER }}/www/skills2025"
+      # - name: Vérifier la version de Docker
+      #   run: |
+      #     eval $(ssh-agent -s)
+      #     ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
+      #     mkdir -p ~/.ssh
+      #     ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
+      #     ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "docker --version && docker compose version || docker-compose --version"
       - name : docker cmd
         run: |
           eval $(ssh-agent -s)
@@ -192,5 +192,6 @@ jobs:
           ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "
             docker volume create bentoweb_db_data || true
-            cd /home/${{ secrets.PROD_SSH_USER }}/www/skills2025 && docker compose down && docker compose -f docker-compose.prod.yaml up -d
+            docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml down && \
+            docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml up -d
           "
