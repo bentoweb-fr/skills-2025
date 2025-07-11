@@ -195,3 +195,7 @@ jobs:
             docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml down && \
             docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml up -d
           "
+
+
+######################## TODO
+# - Si Nginx est déjà lancé, simplement le redémarrer après avoir copié les fichiers deconfig du site concerné à côté des configs des autres sites
