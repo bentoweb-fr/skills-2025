@@ -5,9 +5,9 @@ on:
     branches: [ "prod" ]
 
 env:
-  GHCR_FRONT_IMAGE: skills2025/front
-  GHCR_API_IMAGE: skills2025/api
-  GHCR_NGINX_IMAGE: skills2025/nginx
+  GHCR_FRONT_IMAGE: skills2025-front
+  GHCR_API_IMAGE: skills2025-api
+  GHCR_NGINX_IMAGE: skills2025-nginx
 
 jobs:
   front_build:
