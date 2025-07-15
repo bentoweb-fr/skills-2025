@@ -105,7 +105,8 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} \
-            "docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_TOKEN }} && \
+            "mkdir -p /home/${{ secrets.PROD_SSH_USER }}/www/api/ && \
+            docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_TOKEN }} && \
             docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_API_IMAGE }}:latest"
 
   front_deploy: 
