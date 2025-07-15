@@ -126,7 +126,8 @@ jobs:
           ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
-          scp -r ./front/public/. ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:~/www/front/
+          ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "mkdir -p /home/${{ secrets.PROD_SSH_USER }}/www/front/"
+          scp -r ./front/public/. ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/front/ 
 
   nginx_deploy:
     name: Deploy Nginx
