@@ -83,7 +83,7 @@ jobs:
           file: ./docker/nginx/Dockerfile-CI
           push: true
           tags: ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_NGINX_IMAGE }}:latest
-          no-cache: true
+          # no-cache: true
 
   api_deploy:
     name: Deploy API
