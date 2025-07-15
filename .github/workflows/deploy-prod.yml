@@ -128,6 +128,7 @@ jobs:
           context: ./nginx
           file: ./docker/nginx/Dockerfile-CI
           push: true
+          no-cache: true
           tags: ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_NGINX_IMAGE }}:latest
   
   nginx_deploy:
