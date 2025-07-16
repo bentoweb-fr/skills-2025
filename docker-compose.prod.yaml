@@ -26,17 +26,9 @@ services:
       PUID: 1000
       PGID: 1000
       APP_ENV: prod
-      # MYSQL_DATABASE: ${MYSQL_DATABASE}
-      # MYSQL_USER: ${MYSQL_USER}
-      # MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       DATABASE_URL: "mysql://${MYSQL_USER_PROD}:${MYSQL_PASSWORD_PROD}@mysql:3306/${MYSQL_DATABASE_PROD}?serverVersion=8.0.32&charset=utf8mb4"
-    #   build:
-    #     context: ./api
-    #     dockerfile: ../docker/api/Dockerfile
     volumes:
-      # - ./api:/home/benoit/www/api
-      # - /home/${USER}/www/api:/var/www/api
-      - api_volume:/public
+      - api_volume:/var/www/api/public
     networks:
       - bentoweb_network
     expose:
@@ -45,43 +37,14 @@ services:
       - mysql
     restart: unless-stopped
 
-  # front:
-  #   container_name: skills2025-front
-  #   image: ghcr.io/bentoweb-fr/skills2025-front:latest
-  # build:
-  #   context: ./front
-  #   dockerfile: ../docker/front/Dockerfile
-  # volumes:
-  # - ./front:/var/www/front
-  # - /var/www/front:/var/www/front
-  # - ./:/var/www/front
-  # environment:
-  # PUID: 1000
-  # PGID: 1000
-  # NODE_ENV: prod
-  #     VITE_API_URL: https://api.skills2025.local
-  #     SHELL: /bin/ash # Fix chokidar-cli error
-  # restart: unless-stopped
-  # networks:
-  #   - bentoweb_network
-  # ports:
-  #   - "3000:3000"
-
   nginx:
     image: ghcr.io/bentoweb-fr/skills2025-nginx:latest
     pull_policy: never
-    # image: ghcr.io/${REGISTRY_USER}/skills2025-nginx:latest
     container_name: bentoweb_nginx
     volumes:
-      #   - ./api:/var/www/api
       - api_volume:/var/www/api:ro
       - /home/${USER}/www/front:/var/www/front:ro
       - /home/${USER}/www/certs:/etc/nginx/ssl:ro
-    # - /etc/letsencrypt:/etc/letsencrypt:ro
-    # - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    # - ./nginx:/etc/nginx
-    # - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    # - ./nginx.conf:/etc/nginx/nginx.conf:ro
     networks:
       - bentoweb_network
     ports:
@@ -90,20 +53,20 @@ services:
     depends_on:
       - api
 
-  # phpmyadmin:
-  #   image: phpmyadmin:5.2.1
-  #   container_name: bentoweb_phpmyadmin
-  #   restart: always
-  #   ports:
-  #     - 8022:80
-  #   links:
-  #     - mysql:mysql
-  #   environment:
-  #     PMA_HOST: mysql
-  #   depends_on:
-  #     - mysql
-  #   networks:
-  #     - bentoweb_network
+# phpmyadmin:
+#   image: phpmyadmin:5.2.1
+#   container_name: bentoweb_phpmyadmin
+#   restart: always
+#   ports:
+#     - 8022:80
+#   links:
+#     - mysql:mysql
+#   environment:
+#     PMA_HOST: mysql
+#   depends_on:
+#     - mysql
+#   networks:
+#     - bentoweb_network
 
 networks:
   bentoweb_network:
