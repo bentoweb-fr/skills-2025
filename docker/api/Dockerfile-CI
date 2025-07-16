@@ -22,8 +22,6 @@ RUN apt-get update && apt-get install -y \
 
 # RUN php bin/console doctrine:migrations:migrate
 
-# COPY entrypoint.sh /entrypoint.sh
-# COPY ../docker/api/entrypoint.sh /entrypoint.sh
-# RUN chmod +x /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
-# CMD ["php-fpm"]
