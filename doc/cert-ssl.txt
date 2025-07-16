@@ -1,6 +1,24 @@
 openssl req -nodes -newkey rsa:2048 -sha256 -keyout myserver.key -out server.csr
 
-benoit@btwServer:~$ sudo certbot --nginx -d bentoweb.fr -d www.bentoweb.fr
+sudo certbot certonly --standalone -d bentoweb.fr -d www.bentoweb.fr -d api.bentoweb.fr
+
+sudo cp -L /etc/letsencrypt/live/bentoweb.fr/fullchain.pem /home/benoit/www/certs/
+
+sudo cp -L /etc/letsencrypt/live/bentoweb.fr/privkey.pem /home/benoit/www/certs/
+
+
+
+sudo nano /etc/letsencrypt/renewal-hooks/deploy/copy-nginx-certs.sh
+sudo chmod +x /etc/letsencrypt/renewal-hooks/deploy/copy-nginx-certs.sh
+
+
+
+
+
+
+
+
+benoit@btwServer:~$ sudo certbot --nginx -d bentoweb.fr -d www.bentoweb.fr -d api.bentoweb.fr
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
 Requesting a certificate for bentoweb.fr and www.bentoweb.fr
 

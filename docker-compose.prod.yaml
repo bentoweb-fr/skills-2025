@@ -17,7 +17,7 @@ services:
       - bentoweb_db_data:/var/lib/mysql
     networks:
       - bentoweb_network
-      
+
   api:
     container_name: bentoweb_api
     image: ghcr.io/bentoweb-fr/skills2025-api:latest
@@ -42,7 +42,7 @@ services:
     pull_policy: never
     container_name: bentoweb_nginx
     volumes:
-      - api_volume:/var/www/api:ro
+      - api_volume:/var/www/api/public:ro
       - /home/${USER}/www/front:/var/www/front:ro
       - /home/${USER}/www/certs:/etc/nginx/ssl:ro
     networks:
