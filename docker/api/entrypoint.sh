@@ -5,9 +5,48 @@ set -e
 cd /var/www/api
 
 # Attendre que la base de données soit prête
-until php bin/console doctrine:query:sql "SELECT 1" >/dev/null 2>&1; do
-    echo "En attente de la base de données..."
-    sleep 2
+echo "Attente de la disponibilité de MySQL..."
+
+# Extraire les informations de connexion depuis DATABASE_URL
+# Format: mysql://user:password@host:port/database
+DB_USER=$(echo "$DATABASE_URL" | sed -n 's/.*\/\/\([^:]*\):.*/\1/p')
+DB_PASSWORD=$(echo "$DATABASE_URL" | sed -n 's/.*\/\/[^:]*:\([^@]*\)@.*/\1/p')
+DB_HOST=$(echo "$DATABASE_URL" | sed -n 's/.*@\([^:]*\):.*/\1/p')
+
+echo "Connexion à MySQL : utilisateur=$DB_USER, host=$DB_HOST"
+
+sleep 10  # Attendre un délai initial pour laisser MySQL démarrer
+
+# Attendre que MySQL soit complètement prêt
+max_attempts=60
+attempt=1
+
+while [ $attempt -le $max_attempts ]; do
+    echo "Tentative de connexion à la base de données ($attempt/$max_attempts)..."
+    
+    # Utiliser mysqladmin pour tester la connexion (plus fiable que doctrine au démarrage)
+    if mysqladmin ping -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" --silent 2>/dev/null; then
+        echo "MySQL est prêt ! Vérification avec Doctrine..."
+        
+        # Double vérification avec Doctrine
+        if php bin/console doctrine:query:sql "SELECT 1" >/dev/null 2>&1; then
+            echo "Base de données complètement prête !"
+            break
+        fi
+    fi
+    
+    if [ $attempt -eq $max_attempts ]; then
+        echo "Erreur: Impossible de se connecter à la base de données après $max_attempts tentatives"
+        echo "Variables de connexion:"
+        echo "  DB_HOST=$DB_HOST"
+        echo "  DB_USER=$DB_USER"
+        echo "  DATABASE_URL=$DATABASE_URL"
+        exit 1
+    fi
+    
+    echo "Base de données pas encore prête, nouvelle tentative dans 3 secondes..."
+    sleep 3
+    attempt=$((attempt + 1))
 done
 
 # Exécuter les migrations de base de données
