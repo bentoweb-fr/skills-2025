@@ -101,12 +101,12 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_TOKEN }}
+      - uses: ./.github/actions/ssh-setup
+        with:
+          ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
+          ssh-host: ${{ secrets.PROD_SSH_HOST }}
       - name: Pull API Docker image on server
         run: |
-          eval $(ssh-agent -s)
-          ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} \
             "mkdir -p /home/${{ secrets.PROD_SSH_USER }}/www/api/ && \
             docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_TOKEN }} && \
@@ -117,10 +117,6 @@ jobs:
           echo "MYSQL_USER_PROD=${{ secrets.MYSQL_USER_PROD }}" >> .env
           echo "MYSQL_PASSWORD_PROD=${{ secrets.MYSQL_PASSWORD_PROD }}" >> .env
           echo "MYSQL_ROOT_PASSWORD_PROD=${{ secrets.MYSQL_ROOT_PASSWORD_PROD }}" >> .env
-          eval $(ssh-agent -s)
-          ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           scp .env ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/.env
 
   front_deploy: 
@@ -135,12 +131,12 @@ jobs:
         with:
           name: front-artifact
           path: ./front/public
+      - uses: ./.github/actions/ssh-setup
+        with:
+          ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
+          ssh-host: ${{ secrets.PROD_SSH_HOST }}
       - name: Déployer sur le PS
-        run: | 
-          eval $(ssh-agent -s)
-          ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
+        run: |
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "mkdir -p /home/${{ secrets.PROD_SSH_USER }}/www/front/"
           scp -r ./front/public/. ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/front/ 
 
@@ -157,14 +153,12 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_TOKEN }}
-      - name: Debug NGINX image tag
-        run: echo "ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_NGINX_IMAGE }}:latest"
+      - uses: ./.github/actions/ssh-setup
+        with:
+          ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
+          ssh-host: ${{ secrets.PROD_SSH_HOST }}
       - name: Pull Nginx Docker image on server
         run: |
-          eval $(ssh-agent -s)
-          ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} \
             "docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_TOKEN }} && \
             docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_NGINX_IMAGE }}:latest"
@@ -176,19 +170,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - uses: ./.github/actions/ssh-setup
+        with:
+          ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
+          ssh-host: ${{ secrets.PROD_SSH_HOST }}
       - name: Copy docker-compose file to server
         run: |
-          eval $(ssh-agent -s)
-          ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           scp ./docker-compose.prod.yaml ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/
       - name : docker cmd
         run: |
-          eval $(ssh-agent -s)
-          ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "
             docker volume create bentoweb_db_data || true
             docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml down && \

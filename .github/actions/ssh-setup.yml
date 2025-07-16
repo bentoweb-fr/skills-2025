@@ -1,0 +1,21 @@
+name: 'Setup SSH'
+description: 'Configure SSH for deployment'
+
+inputs:
+  ssh-private-key:
+    description: 'SSH private key'
+    required: true
+  ssh-host:
+    description: 'SSH host'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure SSH
+      shell: bash
+      run: |
+        eval $(ssh-agent -s)
+        ssh-add - <<< "${{ inputs.ssh-private-key }}"
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ inputs.ssh-host }} >> ~/.ssh/known_hosts
