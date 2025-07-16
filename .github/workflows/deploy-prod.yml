@@ -117,6 +117,10 @@ jobs:
           echo "MYSQL_USER_PROD=${{ secrets.MYSQL_USER_PROD }}" >> .env
           echo "MYSQL_PASSWORD_PROD=${{ secrets.MYSQL_PASSWORD_PROD }}" >> .env
           echo "MYSQL_ROOT_PASSWORD_PROD=${{ secrets.MYSQL_ROOT_PASSWORD_PROD }}" >> .env
+          eval $(ssh-agent -s)
+          ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
           scp .env ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/.env
 
   front_deploy: 
