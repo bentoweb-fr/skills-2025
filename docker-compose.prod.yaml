@@ -1,6 +1,6 @@
 services:
   api:
-    # container_name: skills2025_api
+    container_name: bentoweb_api
     image: ghcr.io/bentoweb-fr/skills2025-api:latest
     pull_policy: never
     environment:
@@ -10,7 +10,7 @@ services:
       # MYSQL_DATABASE: ${MYSQL_DATABASE}
       # MYSQL_USER: ${MYSQL_USER}
       # MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      DATABASE_URL: "mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}?serverVersion=8.0.32&charset=utf8mb4"
+      DATABASE_URL: "mysql://${MYSQL_USER_PROD}:${MYSQL_PASSWORD_PROD}@mysql:3306/${MYSQL_DATABASE_PROD}?serverVersion=8.0.32&charset=utf8mb4"
     #   build:
     #     context: ./api
     #     dockerfile: ../docker/api/Dockerfile
@@ -51,7 +51,7 @@ services:
     image: ghcr.io/bentoweb-fr/skills2025-nginx:latest
     pull_policy: never
     # image: ghcr.io/${REGISTRY_USER}/skills2025-nginx:latest
-    # container_name: skills2025_nginx
+    container_name: bentoweb_nginx
     volumes:
       #   - ./api:/var/www/api
       - api_volume:/var/www/api:ro
@@ -72,31 +72,36 @@ services:
 
   mysql:
     image: mysql:8.0
+    container_name: bentoweb_mysql
     restart: always
     env_file:
       - .env
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      PUID: 1000
+      PGID: 1000
+      MYSQL_DATABASE: ${MYSQL_DATABASE_PROD}
+      MYSQL_USER: ${MYSQL_USER_PROD}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD_PROD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD_PROD}
     volumes:
       - bentoweb_db_data:/var/lib/mysql
+    networks:
+      - bentoweb_network
 
-# phpmyadmin:
-#   image: phpmyadmin:5.2.1
-#   container_name: skills2025_phpmyadmin
-#   restart: always
-#   ports:
-#     - 8022:80
-#   links:
-#     - mysql:mysql
-#   environment:
-#     PMA_HOST: mysql
-#   depends_on:
-#     - mysql
-#   networks:
-#     - bentoweb_network
+  # phpmyadmin:
+  #   image: phpmyadmin:5.2.1
+  #   container_name: bentoweb_phpmyadmin
+  #   restart: always
+  #   ports:
+  #     - 8022:80
+  #   links:
+  #     - mysql:mysql
+  #   environment:
+  #     PMA_HOST: mysql
+  #   depends_on:
+  #     - mysql
+  #   networks:
+  #     - bentoweb_network
 
 networks:
   bentoweb_network:

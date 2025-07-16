@@ -108,6 +108,13 @@ jobs:
             "mkdir -p /home/${{ secrets.PROD_SSH_USER }}/www/api/ && \
             docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_TOKEN }} && \
             docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_API_IMAGE }}:latest"
+      - name: Générer le fichier .env pour la prod
+        run: |
+          echo "MYSQL_DATABASE_PROD=${{ secrets.MYSQL_DATABASE_PROD }}" >> .env
+          echo "MYSQL_USER_PROD=${{ secrets.MYSQL_USER_PROD }}" >> .env
+          echo "MYSQL_PASSWORD_PROD=${{ secrets.MYSQL_PASSWORD_PROD }}" >> .env
+          echo "MYSQL_ROOT_PASSWORD_PROD=${{ secrets.MYSQL_ROOT_PASSWORD_PROD }}" >> .env
+          scp .env ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/.env
 
   front_deploy: 
     name: Deploy Front
@@ -137,7 +144,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Login GHCR 
+      - name: Login GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -147,7 +154,6 @@ jobs:
         run: echo "ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_NGINX_IMAGE }}:latest"
       - name: Pull Nginx Docker image on server
         run: |
-          # sleep 10
           eval $(ssh-agent -s)
           ssh-add - <<< "${{ secrets.PROD_SSH_KEY }}"
           mkdir -p ~/.ssh
