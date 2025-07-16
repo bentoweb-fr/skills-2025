@@ -1,4 +1,23 @@
 services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: bentoweb_mysql
+    restart: always
+    env_file:
+      - .env
+    environment:
+      PUID: 1000
+      PGID: 1000
+      MYSQL_DATABASE: ${MYSQL_DATABASE_PROD}
+      MYSQL_USER: ${MYSQL_USER_PROD}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD_PROD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD_PROD}
+    volumes:
+      - bentoweb_db_data:/var/lib/mysql
+    networks:
+      - bentoweb_network
+      
   api:
     container_name: bentoweb_api
     image: ghcr.io/bentoweb-fr/skills2025-api:latest
@@ -69,24 +88,6 @@ services:
       - "443:443"
     depends_on:
       - api
-
-  mysql:
-    image: mysql:8.0
-    container_name: bentoweb_mysql
-    restart: always
-    env_file:
-      - .env
-    environment:
-      PUID: 1000
-      PGID: 1000
-      MYSQL_DATABASE: ${MYSQL_DATABASE_PROD}
-      MYSQL_USER: ${MYSQL_USER_PROD}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD_PROD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD_PROD}
-    volumes:
-      - bentoweb_db_data:/var/lib/mysql
-    networks:
-      - bentoweb_network
 
   # phpmyadmin:
   #   image: phpmyadmin:5.2.1

@@ -18,12 +18,12 @@ RUN apt-get update && apt-get install -y \
 # RUN chmod -R 777 /var/www/html
 
 # ???
-WORKDIR /var/www/api
+# WORKDIR /var/www/api
 
 # RUN php bin/console doctrine:migrations:migrate
 
 # COPY entrypoint.sh /entrypoint.sh
-COPY ../docker/api/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# COPY ../docker/api/entrypoint.sh /entrypoint.sh
+# RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["php-fpm"]
+# CMD ["php-fpm"]
