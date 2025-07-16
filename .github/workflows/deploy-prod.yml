@@ -105,6 +105,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
           ssh-host: ${{ secrets.PROD_SSH_HOST }}
+          ssh-user: ${{ secrets.PROD_SSH_USER }}
       - name: Pull API Docker image on server
         run: |
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} \
@@ -135,6 +136,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
           ssh-host: ${{ secrets.PROD_SSH_HOST }}
+          ssh-user: ${{ secrets.PROD_SSH_USER }}
       - name: Déployer sur le PS
         run: |
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "mkdir -p /home/${{ secrets.PROD_SSH_USER }}/www/front/"
@@ -157,6 +159,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
           ssh-host: ${{ secrets.PROD_SSH_HOST }}
+          ssh-user: ${{ secrets.PROD_SSH_USER }}
       - name: Pull Nginx Docker image on server
         run: |
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} \
@@ -174,6 +177,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
           ssh-host: ${{ secrets.PROD_SSH_HOST }}
+          ssh-user: ${{ secrets.PROD_SSH_USER }}
       - name: Copy docker-compose file to server
         run: |
           scp ./docker-compose.prod.yaml ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/
