@@ -13,7 +13,8 @@ echo "Attente de la disponibilité de MySQL..."
 DB_USER=$(echo "$DATABASE_URL" | sed -n 's/.*:\/\/\([^:]*\):.*/\1/p')
 DB_PASSWORD=$(echo "$DATABASE_URL" | sed -n 's/.*:\/\/[^:]*:\([^@]*\)@.*/\1/p')
 DB_HOST=$(echo "$DATABASE_URL" | sed -n 's/.*@\([^:]*\):.*/\1/p')
-DB_NAME=$(echo "$DATABASE_URL" | sed -n 's/.*\/[a-zA-Z0-9_]*\?*\(.*\)/\1/p' | cut -d'?' -f1)
+# DB_NAME=$(echo "$DATABASE_URL" | sed -n 's/.*\/[a-zA-Z0-9_]*\?*\(.*\)/\1/p' | cut -d'?' -f1)
+DB_NAME=$(echo "$DATABASE_URL" | sed -E 's|.*/([^/?]+).*|\\1|')
 
 echo "Variables extraites :"
 echo "  DB_USER=$DB_USER"
