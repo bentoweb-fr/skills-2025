@@ -28,7 +28,7 @@ services:
       APP_ENV: prod
       DATABASE_URL: "mysql://${MYSQL_USER_PROD}:${MYSQL_PASSWORD_PROD}@mysql:3306/${MYSQL_DATABASE_PROD}?serverVersion=8.0.32&charset=utf8mb4"
     volumes:
-      - api_volume:/var/www/api/public
+      - api_volume:/var/www/api
     networks:
       - bentoweb_network
     expose:
@@ -42,7 +42,7 @@ services:
     pull_policy: never
     container_name: bentoweb_nginx
     volumes:
-      - api_volume:/var/www/api/public:ro
+      - api_volume:/var/www/api:ro
       - /home/${USER}/www/front:/var/www/front:ro
       - /home/${USER}/www/certs:/etc/nginx/ssl:ro
     networks:

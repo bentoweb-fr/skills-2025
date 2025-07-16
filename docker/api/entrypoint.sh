@@ -7,13 +7,20 @@ cd /var/www/api
 # Attendre que la base de données soit prête
 echo "Attente de la disponibilité de MySQL..."
 
+
 # Extraire les informations de connexion depuis DATABASE_URL
 # Format: mysql://user:password@host:port/database
-DB_USER=$(echo "$DATABASE_URL" | sed -n 's/.*\/\/\([^:]*\):.*/\1/p')
-DB_PASSWORD=$(echo "$DATABASE_URL" | sed -n 's/.*\/\/[^:]*:\([^@]*\)@.*/\1/p')
+DB_USER=$(echo "$DATABASE_URL" | sed -n 's/.*:\/\/\([^:]*\):.*/\1/p')
+DB_PASSWORD=$(echo "$DATABASE_URL" | sed -n 's/.*:\/\/[^:]*:\([^@]*\)@.*/\1/p')
 DB_HOST=$(echo "$DATABASE_URL" | sed -n 's/.*@\([^:]*\):.*/\1/p')
+DB_NAME=$(echo "$DATABASE_URL" | sed -n 's/.*\/[a-zA-Z0-9_]*\?*\(.*\)/\1/p' | cut -d'?' -f1)
 
-echo "Connexion à MySQL : utilisateur=$DB_USER, host=$DB_HOST"
+echo "Variables extraites :"
+echo "  DB_USER=$DB_USER"
+echo "  DB_PASSWORD=$DB_PASSWORD"
+echo "  DB_HOST=$DB_HOST"
+echo "  DB_NAME=$DB_NAME"
+echo "  DATABASE_URL=$DATABASE_URL"
 
 sleep 10  # Attendre un délai initial pour laisser MySQL démarrer
 
@@ -25,9 +32,8 @@ while [ $attempt -le $max_attempts ]; do
     echo "Tentative de connexion à la base de données ($attempt/$max_attempts)..."
     
     # Utiliser mysqladmin pour tester la connexion (plus fiable que doctrine au démarrage)
-    if mysqladmin ping -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" --silent 2>/dev/null; then
+    if mysqladmin ping -h "$DB_HOST" -u"$DB_USER" -p"$DB_PASSWORD" --silent 2>/dev/null; then
         echo "MySQL est prêt ! Vérification avec Doctrine..."
-        
         # Double vérification avec Doctrine
         if php bin/console doctrine:query:sql "SELECT 1" >/dev/null 2>&1; then
             echo "Base de données complètement prête !"
@@ -40,6 +46,8 @@ while [ $attempt -le $max_attempts ]; do
         echo "Variables de connexion:"
         echo "  DB_HOST=$DB_HOST"
         echo "  DB_USER=$DB_USER"
+        echo "  DB_PASSWORD=$DB_PASSWORD"
+        echo "  DB_NAME=$DB_NAME"
         echo "  DATABASE_URL=$DATABASE_URL"
         exit 1
     fi
