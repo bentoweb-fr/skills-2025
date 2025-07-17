@@ -74,6 +74,7 @@ networks:
 
 volumes:
   api_volume:
+    external: true
   bentoweb_db_data:
     external: true
     name: bentoweb_db_data
