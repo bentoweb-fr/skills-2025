@@ -55,15 +55,16 @@ jobs:
           password: ${{ secrets.REGISTRY_TOKEN }}
       - name: Générer le fichier .env pour l'API symfony en prod
         run: |
-          echo "DATABASE_URL=\"mysql://${{ secrets.MYSQL_USER_PROD }}:${{ secrets.MYSQL_PASSWORD_PROD }}@mysql:3306/${{ secrets.MYSQL_DATABASE_PROD }}?serverVersion=8.0.32&charset=utf8mb4\"" >> .env.prod
-          mv .env.prod .env
-          # scp .env.prod ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/.env.prod
+          echo "APP_ENV=prod" >> .env
+          echo "APP_DEBUG=false" >> .env
+          echo "DATABASE_URL=\"mysql://${{ secrets.MYSQL_USER_PROD }}:${{ secrets.MYSQL_PASSWORD_PROD }}@mysql:3306/${{ secrets.MYSQL_DATABASE_PROD }}?serverVersion=8.0.32&charset=utf8mb4\"" >> .env
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: ./api
           file: ./docker/api/Dockerfile-CI
           push: true
+          no-cache: true
           tags: ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_API_IMAGE }}:latest
 
   nginx_build:

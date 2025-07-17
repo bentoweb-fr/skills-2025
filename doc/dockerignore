@@ -1,0 +1,13 @@
+En développement, vous utilisez des volumes montés :
+
+Cela signifie que :
+
+✅ En développement : Les fichiers locaux sont montés directement dans le conteneur, donc .dockerignore n'a PAS d'impact
+✅ En production : L'image est construite avec COPY, donc .dockerignore et les suppressions explicites dans Dockerfile-CI s'appliquent
+Conclusion :
+
+Le .dockerignore modifié (sans les exclusions de configuration) est la meilleure solution car :
+
+Développement local : Utilise des volumes montés → .dockerignore n'affecte pas le WebProfiler
+Production : Utilise Dockerfile-CI qui supprime explicitement les fichiers dev → Pas de WebProfiler en prod
+Vous pouvez donc utiliser Docker en développement sans problème, le WebProfiler fonctionnera normalement grâce aux volumes montés qui contournent complètement le processus de build d'image.

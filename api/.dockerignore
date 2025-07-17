@@ -1,0 +1,26 @@
+# Logs et cache
+var/log/*
+var/cache/*
+!var/log/.gitkeep
+!var/cache/.gitkeep
+
+# Tests
+tests/
+
+# Documentation
+README.md
+
+# Environnement local
+.env.local
+.env.local.php
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
