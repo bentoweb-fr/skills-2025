@@ -53,6 +53,11 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_TOKEN }}
+      - name: Générer le fichier .env pour l'API symfony en prod
+        run: |
+          echo "DATABASE_URL=\"mysql://${{ secrets.MYSQL_USER_PROD }}:${{ secrets.MYSQL_PASSWORD_PROD }}@mysql:3306/${{ secrets.MYSQL_DATABASE_PROD }}?serverVersion=8.0.32&charset=utf8mb4\"" >> .env.prod
+          mv .env.prod .env
+          # scp .env.prod ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/.env.prod
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -112,7 +117,7 @@ jobs:
             "mkdir -p /home/${{ secrets.PROD_SSH_USER }}/www/api/ && \
             docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_TOKEN }} && \
             docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_API_IMAGE }}:latest"
-      - name: Générer le fichier .env pour la prod
+      - name: Générer le fichier .env pour le docker-compose en prod
         run: |
           echo "MYSQL_DATABASE_PROD=${{ secrets.MYSQL_DATABASE_PROD }}" >> .env
           echo "MYSQL_USER_PROD=${{ secrets.MYSQL_USER_PROD }}" >> .env
