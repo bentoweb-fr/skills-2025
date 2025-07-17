@@ -30,12 +30,21 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 # Copier tous les fichiers de l'application
 COPY . .
 
+# Debug: Vérifier la configuration des bundles
+RUN echo "=== BUNDLES CONFIGURATION ===" && cat config/bundles.php
+
 # S'assurer que APP_ENV est défini pour la production
 ENV APP_ENV=prod
 ENV APP_DEBUG=0
 
+# Nettoyer explicitement le cache Symfony si il existe
+RUN rm -rf var/cache/* || true
+
 # Réexécuter composer pour les scripts post-install
 RUN composer dump-autoload --optimize
+
+# Test de Symfony pour vérifier qu'il n'y a pas d'erreur de configuration
+RUN php bin/console about --env=prod || echo "Erreur de configuration Symfony détectée"
 
 # Définir les permissions
 RUN chown -R www-data:www-data /var/www/api
