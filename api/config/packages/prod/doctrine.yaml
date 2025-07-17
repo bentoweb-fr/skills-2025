@@ -1,6 +1,6 @@
 framework:
     annotations:
-        cache: php_array
+        # cache: php_array
     serializer:
         cache: php_array
     validation:
