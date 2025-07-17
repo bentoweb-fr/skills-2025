@@ -30,9 +30,6 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 # Copier tous les fichiers de l'application
 COPY . .
 
-# Supprimer explicitement les fichiers de configuration de développement s'ils existent
-RUN rm -f config/packages/web_profiler.yaml config/packages/debug.yaml
-
 # S'assurer que APP_ENV est défini pour la production
 ENV APP_ENV=prod
 ENV APP_DEBUG=0
