@@ -200,10 +200,10 @@ jobs:
       - name : docker cmd
         run: |
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "
+            docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml down --volumes && \
             docker volume create bentoweb_db_data || true
             docker volume rm api_volume || true && \
             docker volume create api_volume && \
-            docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml down && \
             docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml pull && \
             docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml up -d --force-recreate
           "

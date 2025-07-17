@@ -8,6 +8,7 @@ cd /var/www/api
 echo "=== DEBUGGING INFORMATION ==="
 echo "APP_ENV: $APP_ENV"
 echo "APP_DEBUG: $APP_DEBUG"
+echo "DATABASE_URL=$DATABASE_URL"
 echo "Working directory: $(pwd)"
 echo "Symfony environment: $(php bin/console about --env=prod 2>/dev/null | grep Environment || echo 'Cannot determine')"
 
