@@ -65,7 +65,9 @@ jobs:
           file: ./docker/api/Dockerfile-CI
           push: true
           no-cache: true
-          tags: ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_API_IMAGE }}:latest
+          tags: |
+            ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_API_IMAGE }}:latest
+            ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_API_IMAGE }}:${{ github.sha }}
 
   nginx_build:
     name: Build Nginx
@@ -112,12 +114,14 @@ jobs:
           ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
           ssh-host: ${{ secrets.PROD_SSH_HOST }}
           ssh-user: ${{ secrets.PROD_SSH_USER }}
+      - name: Remove existing API Docker image
+        run: |
+          ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} \
+            "docker rmi ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_API_IMAGE }}:latest || true"
       - name: Pull API Docker image on server
         run: |
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} \
-            "mkdir -p /home/${{ secrets.PROD_SSH_USER }}/www/api/ && \
-            docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_TOKEN }} && \
-            docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_API_IMAGE }}:latest"
+            "docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_API_IMAGE }}:${{ github.sha }}"
       - name: Générer le fichier .env pour le docker-compose en prod
         run: |
           echo "MYSQL_DATABASE_PROD=${{ secrets.MYSQL_DATABASE_PROD }}" >> .env
@@ -186,13 +190,16 @@ jobs:
           ssh-user: ${{ secrets.PROD_SSH_USER }}
       - name: Copy docker-compose file to server
         run: |
-          scp ./docker-compose.prod.yaml ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/
+          # Modifier le docker-compose pour utiliser le tag du commit
+          # sed "s/:latest/:${{ github.sha }}/g" docker-compose.prod.yaml > docker-compose.prod.yaml
+          scp ./docker-compose.prod.yaml ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml
       - name : docker cmd
         run: |
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "
             docker volume create bentoweb_db_data || true
             docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml down && \
-            docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml up -d
+            docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml pull && \
+            docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml up -d --force-recreate
           "
 
 

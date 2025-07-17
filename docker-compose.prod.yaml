@@ -20,8 +20,8 @@ services:
 
   api:
     container_name: bentoweb_api
-    image: ghcr.io/bentoweb-fr/skills2025-api:latest
-    pull_policy: never
+    image: ghcr.io/bentoweb-fr/skills2025-api:${{ github.sha }}
+    pull_policy: always
     environment:
       PUID: 1000
       PGID: 1000
