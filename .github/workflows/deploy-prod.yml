@@ -129,6 +129,10 @@ jobs:
           echo "MYSQL_PASSWORD_PROD=${{ secrets.MYSQL_PASSWORD_PROD }}" >> .env
           echo "MYSQL_ROOT_PASSWORD_PROD=${{ secrets.MYSQL_ROOT_PASSWORD_PROD }}" >> .env
           scp .env ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/.env
+      - name: Set GITHUB_SHA environment variable
+        run: |
+          echo "GITHUB_SHA=${{ github.sha }}" >> .env
+          scp .env ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/.env
 
   front_deploy: 
     name: Deploy Front
