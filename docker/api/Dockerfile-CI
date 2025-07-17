@@ -28,10 +28,22 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 # Copier tous les fichiers de l'application
+# IMPORTANT: Cette image doit utiliser la version avec bundles.php corrigé (prod=false pour WebProfiler)
 COPY . .
 
-# Debug: Vérifier la configuration des bundles
-RUN echo "=== BUNDLES CONFIGURATION ===" && cat config/bundles.php
+# Debug: Vérifier la configuration des bundles ET s'assurer que prod=false est présent
+RUN echo "=== BUNDLES CONFIGURATION ===" && cat config/bundles.php && \
+    echo "=== VERIFICATION WEBPROFILER ===" && \
+    grep -q "'prod' => false" config/bundles.php && echo "✅ WebProfiler correctement désactivé en prod" || \
+    (echo "❌ ERREUR: WebProfiler non désactivé en prod dans bundles.php" && exit 1)
+
+# IMPORTANT: Supprimer les fichiers de configuration de développement qui ne doivent pas être en production
+RUN rm -f config/packages/web_profiler.yaml config/packages/debug.yaml config/routes/web_profiler.yaml
+
+# Debug: Vérifier que les fichiers ont été supprimés
+RUN echo "=== FICHIERS APRÈS SUPPRESSION ===" && \
+    (ls -la config/packages/ | grep -E "(web_profiler|debug)" || echo "Aucun fichier de développement dans packages/ - OK") && \
+    (ls -la config/routes/ | grep -E "(web_profiler|debug)" || echo "Aucun fichier de développement dans routes/ - OK")
 
 # S'assurer que APP_ENV est défini pour la production
 ENV APP_ENV=prod
