@@ -57,8 +57,6 @@ jobs:
         run: |
           echo "APP_ENV=prod" >> .env
           echo "APP_DEBUG=false" >> .env
-          echo "ADMIN_EMAIL_PROD=${{ secrets.ADMIN_EMAIL_PROD }}" >> .env
-          echo "ADMIN_PASSWORD_HASH_PROD=${{ secrets.ADMIN_PASSWORD_HASH_PROD }}" >> .env
           echo "DATABASE_URL=\"mysql://${{ secrets.MYSQL_USER_PROD }}:${{ secrets.MYSQL_PASSWORD_PROD }}@mysql:3306/${{ secrets.MYSQL_DATABASE_PROD }}?serverVersion=8.0.32&charset=utf8mb4\"" >> .env
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -130,6 +128,8 @@ jobs:
           echo "MYSQL_USER_PROD=${{ secrets.MYSQL_USER_PROD }}" >> .env
           echo "MYSQL_PASSWORD_PROD=${{ secrets.MYSQL_PASSWORD_PROD }}" >> .env
           echo "MYSQL_ROOT_PASSWORD_PROD=${{ secrets.MYSQL_ROOT_PASSWORD_PROD }}" >> .env
+          echo "ADMIN_EMAIL_PROD=${{ secrets.ADMIN_EMAIL_PROD }}" >> .env
+          echo "ADMIN_PASSWORD_HASH_PROD=${{ secrets.ADMIN_PASSWORD_HASH_PROD }}" >> .env
           scp .env ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/skills2025/.env
       - name: Set GITHUB_SHA environment variable
         run: |
