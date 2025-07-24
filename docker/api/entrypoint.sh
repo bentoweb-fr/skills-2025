@@ -5,28 +5,28 @@ set -e
 cd /var/www/api
 
 # Debug: Vérifier l'environnement et les fichiers
-echo "=== DEBUGGING INFORMATION ==="
-echo "APP_ENV: $APP_ENV || true"
-echo "APP_DEBUG: $APP_DEBUG || true"
-echo "DATABASE_URL=$DATABASE_URL || true"
-echo "Working directory: $(pwd) || true"
-echo "Symfony environment: $(php bin/console about --env=prod 2>/dev/null | grep Environment || echo 'Cannot determine') || true"
+# echo "=== DEBUGGING INFORMATION ==="
+# echo "APP_ENV: $APP_ENV || true"
+# echo "APP_DEBUG: $APP_DEBUG || true"
+# echo "DATABASE_URL=$DATABASE_URL || true"
+# echo "Working directory: $(pwd) || true"
+# echo "Symfony environment: $(php bin/console about --env=prod 2>/dev/null | grep Environment || echo 'Cannot determine') || true"
 
-echo "=== BUNDLES CONFIGURATION ==="
-echo "Contenu de config/bundles.php:"
-cat config/bundles.php
+# echo "=== BUNDLES CONFIGURATION ==="
+# echo "Contenu de config/bundles.php:"
+# cat config/bundles.php
 
-echo "=== FILES CHECK ==="
-echo "Fichiers dans config/packages:"
-ls -la config/packages/
-if [ -d "config/packages/dev" ]; then
-    echo "Fichiers dans config/packages/dev:"
-    ls -la config/packages/dev/
-fi
+# echo "=== FILES CHECK ==="
+# echo "Fichiers dans config/packages:"
+# ls -la config/packages/
+# if [ -d "config/packages/dev" ]; then
+#     echo "Fichiers dans config/packages/dev:"
+#     ls -la config/packages/dev/
+# fi
 
-echo "=== TESTING SYMFONY ==="
-echo "Test basique de Symfony..."
-php bin/console --version
+# echo "=== TESTING SYMFONY ==="
+# echo "Test basique de Symfony..."
+# php bin/console --version
 
 # Attendre que la base de données soit prête
 # echo "Attente de la disponibilité de MySQL..."
