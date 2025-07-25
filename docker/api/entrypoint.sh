@@ -93,11 +93,11 @@ echo "Nettoyage du cache..."
 php bin/console cache:clear --env=prod --no-debug
 
 # Création ou mise à jour de l'utilisateur admin
-if [ -n "$ADMIN_EMAIL_PROD" ] && [ -n "$ADMIN_PASSWORD_HASH_PROD" ]; then
+if [ -n "$ADMIN_EMAIL_PROD" ] && [ -n "$ADMIN_PASSWORD_PROD" ]; then
   echo "Création/mise à jour de l'utilisateur admin $ADMIN_EMAIL_PROD :"
-  php bin/console app:ensure-admin-user "$ADMIN_EMAIL_PROD" "$ADMIN_PASSWORD_HASH_PROD"
+  php bin/console app:ensure-admin-user "$ADMIN_EMAIL_PROD" "$ADMIN_PASSWORD_PROD"
 else
-  echo "ADMIN_EMAIL_PROD ou ADMIN_PASSWORD_HASH_PROD non défini, l'utilisateur admin ne sera pas créé/mis à jour."
+  echo "ADMIN_EMAIL_PROD ou ADMIN_PASSWORD_PROD non défini, l'utilisateur admin ne sera pas créé/mis à jour."
 fi
 
 echo "Démarrage du service..."
