@@ -24,12 +24,17 @@ WORKDIR /var/www/api
 # Copier d'abord composer.json et composer.lock pour optimiser le cache Docker
 COPY composer.json composer.lock ./
 
-# Installer les dépendances PHP (optimisation du cache)
+# Installer les dépendances PHP (sans scripts pour optimiser le cache)
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 # Copier tous les fichiers de l'application
-# IMPORTANT: Cette image doit utiliser la version avec bundles.php corrigé (prod=false pour WebProfiler)
 COPY . .
+
+# Installer les assets et nettoyer le cache
+RUN composer run-script auto-scripts
+
+# Réexécuter les scripts post-install maintenant que tous les fichiers sont copiés
+RUN composer run-script post-install-cmd
 
 # Debug: Vérifier la configuration des bundles ET s'assurer que prod=false est présent
 RUN echo "=== BUNDLES CONFIGURATION ===" && cat config/bundles.php && \
