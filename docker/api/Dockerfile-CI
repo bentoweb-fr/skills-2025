@@ -30,11 +30,12 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 # Copier tous les fichiers de l'application
 COPY . .
 
-# Installer les assets et nettoyer le cache
-RUN composer run-script auto-scripts
+# S'assurer que APP_ENV est défini pour la production AVANT d'exécuter les scripts
+ENV APP_ENV=prod
+ENV APP_DEBUG=0
 
-# Réexécuter les scripts post-install maintenant que tous les fichiers sont copiés
-RUN composer run-script post-install-cmd
+# Installer les assets et nettoyer le cache (maintenant que APP_ENV=prod)
+RUN composer run-script auto-scripts
 
 # Debug: Vérifier la configuration des bundles ET s'assurer que prod=false est présent
 RUN echo "=== BUNDLES CONFIGURATION ===" && cat config/bundles.php && \
@@ -50,11 +51,7 @@ RUN echo "=== FICHIERS APRÈS SUPPRESSION ===" && \
     (ls -la config/packages/ | grep -E "(web_profiler|debug)" || echo "Aucun fichier de développement dans packages/ - OK") && \
     (ls -la config/routes/ | grep -E "(web_profiler|debug)" || echo "Aucun fichier de développement dans routes/ - OK")
 
-# S'assurer que APP_ENV est défini pour la production
-ENV APP_ENV=prod
-ENV APP_DEBUG=0
-
-# Nettoyer explicitement le cache Symfony si il existe
+# Nettoyer explicitement le cache Symfony après configuration
 RUN rm -rf var/cache/* || true
 
 # Réexécuter composer pour les scripts post-install
