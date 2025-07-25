@@ -57,6 +57,8 @@ jobs:
         run: |
           echo "APP_ENV=prod" >> .env
           echo "APP_DEBUG=false" >> .env
+          # echo "ADMIN_EMAIL_PROD=${{ secrets.ADMIN_EMAIL_PROD }}" >> .env
+          # echo "ADMIN_PASSWORD_HASH_PROD=${{ secrets.ADMIN_PASSWORD_HASH_PROD }}" >> .env
           echo "DATABASE_URL=\"mysql://${{ secrets.MYSQL_USER_PROD }}:${{ secrets.MYSQL_PASSWORD_PROD }}@mysql:3306/${{ secrets.MYSQL_DATABASE_PROD }}?serverVersion=8.0.32&charset=utf8mb4\"" >> .env
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
