@@ -35,7 +35,8 @@ ENV APP_ENV=prod
 ENV APP_DEBUG=0
 
 # Définir une DATABASE_URL temporaire pour le build (Symfony en a besoin même pour cache:clear)
-ENV DATABASE_URL="mysql://dummy:dummy@localhost:3306/dummy"
+# ENV DATABASE_URL="mysql://dummy:dummy@localhost:3306/dummy"
+ENV DATABASE_URL="sqlite:///:memory:"
 
 # Installer les assets et nettoyer le cache (maintenant que APP_ENV=prod)
 RUN echo "=== INSTALLATION DES ASSETS ===" && \
