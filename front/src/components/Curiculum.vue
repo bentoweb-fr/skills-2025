@@ -72,7 +72,8 @@ const projects = reactive({
 });
 
 onMounted(() => {
-  fetch("https://api.skills2025.local/api/projects")
+  // fetch("https://api.skills2025.local/api/projects")
+  fetch("https://api.bentoweb.fr/api/projects")
     .then((response) => {
       if (!response.ok) throw new Error("Erreur HTTP " + response.status);
       return response.json();
