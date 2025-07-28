@@ -5,7 +5,10 @@ import path from "path";
 // import { fileURLToPath, URL } from "node:url";
 import oxlintPlugin from "vite-plugin-oxlint";
 
-console.log(path.resolve(__dirname, "/public"));
+// console.log(path.resolve(__dirname, "/public"));
+// console.log(import.meta.env.VITE_API_URL);
+// console.log(env.VITE_API_URL);
+// console.log(process.env.VITE_API_URL);
 
 // https://vite.dev/config/
 export default defineConfig({

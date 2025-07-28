@@ -57,7 +57,7 @@ services:
     container_name: skills2025_nginx
     volumes:
       - ./api:/var/www/api
-      - ./front:/var/www/front
+      - ./front/public:/var/www/front
       - ./nginx:/etc/nginx
     networks:
       - skills2025_network
