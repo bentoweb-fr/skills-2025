@@ -203,7 +203,7 @@ jobs:
 
   phpmyadmin_config:
     name: Setup PhpMyAdmin
-    needs: [nginx_deploy]
+    # needs: [nginx_deploy]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -221,7 +221,7 @@ jobs:
 
   reboot:
     name: Reboot
-    needs: [phpmyadmin_config]
+    needs: [nginx_deploy, phpmyadmin_config]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

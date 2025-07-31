@@ -71,6 +71,8 @@ const projects = reactive({
   values: [] as Project[],
 });
 
+console.log("TESS");
+
 onMounted(() => {
   // fetch("https://api.skills2025.local/api/projects")
   console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
