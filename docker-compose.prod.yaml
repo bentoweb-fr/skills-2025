@@ -60,12 +60,13 @@ services:
     image: phpmyadmin:5.2.1
     container_name: bentoweb_phpmyadmin
     restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_ABSOLUTE_URI: https://api.bentoweb.fr/phpmyadmin/
     ports:
       - 8022:80
     links:
       - mysql:mysql
-    environment:
-      PMA_HOST: mysql
     depends_on:
       - mysql
     networks:
