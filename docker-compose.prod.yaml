@@ -71,6 +71,8 @@ services:
       - mysql
     networks:
       - bentoweb_network
+    volumes:
+      - ./docker/phpmyadmin/apache.conf:/etc/apache2/conf-available/servername.conf
 
 networks:
   bentoweb_network:

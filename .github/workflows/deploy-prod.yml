@@ -227,6 +227,8 @@ jobs:
             docker volume create api_volume && \
             docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml pull && \
             docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml up -d --force-recreate
+            docker exec bentoweb_phpmyadmin a2enconf servername && \
+            docker exec bentoweb_phpmyadmin apache2ctl restart
           "
 
 
