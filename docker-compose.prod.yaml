@@ -79,6 +79,7 @@ services:
 networks:
   bentoweb_network:
     driver: bridge
+    name: bentoweb_network
 
 volumes:
   api_volume:
