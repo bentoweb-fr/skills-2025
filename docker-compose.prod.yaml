@@ -56,20 +56,20 @@ services:
     depends_on:
       - api
 
-# phpmyadmin:
-#   image: phpmyadmin:5.2.1
-#   container_name: bentoweb_phpmyadmin
-#   restart: always
-#   ports:
-#     - 8022:80
-#   links:
-#     - mysql:mysql
-#   environment:
-#     PMA_HOST: mysql
-#   depends_on:
-#     - mysql
-#   networks:
-#     - bentoweb_network
+  phpmyadmin:
+    image: phpmyadmin:5.2.1
+    container_name: bentoweb_phpmyadmin
+    restart: always
+    ports:
+      - 8022:80
+    links:
+      - mysql:mysql
+    environment:
+      PMA_HOST: mysql
+    depends_on:
+      - mysql
+    networks:
+      - bentoweb_network
 
 networks:
   bentoweb_network:
