@@ -3,8 +3,8 @@
  * Configuration personnalisée pour phpMyAdmin
  */
 
-// Configuration pour fonctionner derrière un proxy
-$cfg['PmaAbsoluteUri'] = 'https://api.bentoweb.fr/phpmyadmin/';
+// Ne pas définir PmaAbsoluteUri ici car c'est géré par la variable d'environnement
+// et ça évite la duplication des chemins
 
 // Configuration des sessions
 $cfg['SessionSavePath'] = '/tmp';

@@ -62,7 +62,6 @@ services:
     restart: always
     environment:
       PMA_HOST: mysql
-      PMA_ABSOLUTE_URI: https://api.bentoweb.fr/phpmyadmin/
       PMA_CONFIG_BASE64: YWxsb3dBcmJpdHJhcnlTZXJ2ZXI9dHJ1ZQo=
     ports:
       - 8022:80
