@@ -75,6 +75,7 @@ services:
     volumes:
       - /home/${USER}/www/phpmyadmin/apache.conf:/etc/apache2/conf-available/servername.conf
       - /home/${USER}/www/phpmyadmin/entrypoint.sh:/entrypoint.sh
+      - /home/${USER}/www/phpmyadmin/config.user.inc.php:/config.user.inc.php
     entrypoint: ["/bin/bash", "/entrypoint.sh"]
 
 networks:

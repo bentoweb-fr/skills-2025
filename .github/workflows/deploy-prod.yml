@@ -217,7 +217,8 @@ jobs:
         run: |
           ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "mkdir -p /home/${{ secrets.PROD_SSH_USER }}/www/phpmyadmin/"
           scp ./docker/phpmyadmin/apache.conf ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/phpmyadmin/apache.conf && \
-          scp ./docker/phpmyadmin/entrypoint.sh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/phpmyadmin/entrypoint.sh
+          scp ./docker/phpmyadmin/entrypoint.sh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/phpmyadmin/entrypoint.sh && \
+          scp ./docker/phpmyadmin/config.user.inc.php ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/phpmyadmin/config.user.inc.php
 
   reboot:
     name: Reboot

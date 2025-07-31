@@ -8,6 +8,11 @@ if [ ! -f /etc/phpmyadmin/config.secret.inc.php ]; then
     echo "\$cfg['blowfish_secret'] = '$(openssl rand -base64 32)';" >> /etc/phpmyadmin/config.secret.inc.php
 fi
 
+# Copier la configuration utilisateur personnalisée
+if [ -f /config.user.inc.php ]; then
+    cp /config.user.inc.php /var/www/html/config.user.inc.php
+fi
+
 # Activer la configuration servername
 a2enconf servername
 
