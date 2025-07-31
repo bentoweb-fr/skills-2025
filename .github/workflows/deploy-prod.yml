@@ -201,9 +201,26 @@ jobs:
             "docker login ghcr.io -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_TOKEN }} && \
             docker pull ghcr.io/${{ secrets.REGISTRY_USER }}/${{ env.GHCR_NGINX_IMAGE }}:latest"
 
+  phpmyadmin_config:
+    name: Setup PhpMyAdmin
+    needs: [nginx_deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/ssh-setup
+        with:
+          ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
+          ssh-host: ${{ secrets.PROD_SSH_HOST }}
+          ssh-user: ${{ secrets.PROD_SSH_USER }}
+      - name: Copy config files to server
+        run: |
+          scp ./docker/phpmyadmin/apache.conf ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/phpmyadmin/apache.conf && \
+          scp ./docker/phpmyadmin/entrypoint.sh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/phpmyadmin/entrypoint.sh
+
   reboot:
     name: Reboot
-    needs: [nginx_deploy]
+    needs: [phpmyadmin_config]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -227,9 +244,9 @@ jobs:
             docker volume create api_volume && \
             docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml pull && \
             docker compose -f /home/${{ secrets.PROD_SSH_USER }}/www/skills2025/docker-compose.prod.yaml up -d --force-recreate
-            docker exec bentoweb_phpmyadmin a2enconf servername && \
-            docker exec bentoweb_phpmyadmin apache2ctl restart
-          "
+            "
+# docker exec bentoweb_phpmyadmin a2enconf servername && \
+# docker exec bentoweb_phpmyadmin apache2ctl restart
 
 
 ######################## TODO

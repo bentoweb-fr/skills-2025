@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-# Ajouter ServerName dans la configuration Apache
-echo 'ServerName api.bentoweb.fr' >> /etc/apache2/apache2.conf
+# Activer la configuration servername
+a2enconf servername
 
 # Tester la configuration Apache
 apache2ctl configtest

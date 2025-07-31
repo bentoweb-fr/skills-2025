@@ -72,8 +72,8 @@ services:
     networks:
       - bentoweb_network
     volumes:
-      # - ./docker/phpmyadmin/apache.conf:/etc/apache2/conf-available/servername.conf
-      - ./phpmyadmin/entrypoint.sh:/entrypoint.sh
+      - /home/${USER}/www/phpmyadmin/apache.conf:/etc/apache2/conf-available/servername.conf
+      - /home/${USER}/www/phpmyadmin/entrypoint.sh:/entrypoint.sh
     entrypoint: ["/bin/bash", "/entrypoint.sh"]
 
 networks:
