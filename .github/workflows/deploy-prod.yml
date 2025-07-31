@@ -215,6 +215,7 @@ jobs:
           ssh-user: ${{ secrets.PROD_SSH_USER }}
       - name: Copy config files to server
         run: |
+          ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }} "mkdir -p /home/${{ secrets.PROD_SSH_USER }}/www/phpmyadmin/"
           scp ./docker/phpmyadmin/apache.conf ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/phpmyadmin/apache.conf && \
           scp ./docker/phpmyadmin/entrypoint.sh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SSH_HOST }}:/home/${{ secrets.PROD_SSH_USER }}/www/phpmyadmin/entrypoint.sh
 
