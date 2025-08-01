@@ -5,11 +5,14 @@
  */
 
 // Configuration pour HTTPS derrière un proxy
-$cfg['ForceSSL'] = true;
-$cfg['is_https'] = true;
+$cfg['ForceSSL'] = false; // Désactivé car géré par le proxy
+$cfg['is_https'] = true;   // Mais on indique qu'on est en HTTPS côté client
 
 // Configuration des sessions avec HTTPS
 $cfg['SessionSavePath'] = '/tmp';
+
+// Configuration spécifique pour les sessions derrière un proxy HTTPS
+$cfg['blowfish_secret'] = 'your-32-character-secret-key-here123456789012345678901234567890';
 
 // Configuration pour les requêtes AJAX
 $cfg['AjaxEnable'] = true;
@@ -18,18 +21,13 @@ $cfg['AjaxEnable'] = true;
 $cfg['TrustedProxies'] = array('172.19.0.0/16');
 $cfg['AllowThirdPartyFraming'] = true;
 
-// Configuration pour éviter les problèmes avec les sessions derrière un proxy
-ini_set('session.cookie_secure', 1);
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_samesite', 'Lax');
-
 // Configuration pour éviter les timeouts
 $cfg['ExecTimeLimit'] = 300;
 $cfg['MemoryLimit'] = '512M';
 
-// Configuration des cookies sécurisés
+// Configuration des cookies sécurisés pour proxy HTTPS
 $cfg['CookieSameSite'] = 'Lax';
-$cfg['CookieSecure'] = true;
+$cfg['CookieSecure'] = false; // Désactivé car le conteneur est en HTTP
 $cfg['CookieHttpOnly'] = true;
 
 // Désactiver les vérifications qui peuvent poser problème derrière un proxy
