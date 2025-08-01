@@ -18,6 +18,11 @@ $cfg['AjaxEnable'] = true;
 $cfg['TrustedProxies'] = array('172.19.0.0/16');
 $cfg['AllowThirdPartyFraming'] = true;
 
+// Configuration pour éviter les problèmes avec les sessions derrière un proxy
+ini_set('session.cookie_secure', 1);
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_samesite', 'Lax');
+
 // Configuration pour éviter les timeouts
 $cfg['ExecTimeLimit'] = 300;
 $cfg['MemoryLimit'] = '512M';
@@ -72,3 +77,12 @@ $cfg['Servers'][$i]['export_templates'] = '';
 $cfg['ServerDefault'] = 1;
 $cfg['MaxNavigationItems'] = 50;
 $cfg['NavigationTreePointerEnable'] = true;
+
+// Configuration pour corriger les problèmes JSON/AJAX
+$cfg['SendErrorReports'] = 'never';
+$cfg['ConsoleEnterExecutes'] = false;
+$cfg['EnableAutocompleteForTablesAndColumns'] = false;
+
+// Désactiver certaines fonctionnalités qui peuvent causer des problèmes
+$cfg['ShowHint'] = false;
+$cfg['ShowServerInfo'] = false;
