@@ -5,7 +5,8 @@ set -e
 mkdir -p /etc/phpmyadmin
 if [ ! -f /etc/phpmyadmin/config.secret.inc.php ]; then
     echo "<?php" > /etc/phpmyadmin/config.secret.inc.php
-    echo "\$cfg['blowfish_secret'] = '$(openssl rand -base64 32)';" >> /etc/phpmyadmin/config.secret.inc.php
+    # Générer une clé de exactement 32 caractères
+    echo "\$cfg['blowfish_secret'] = '$(openssl rand -hex 16)';" >> /etc/phpmyadmin/config.secret.inc.php
 fi
 
 # Copier la configuration utilisateur personnalisée

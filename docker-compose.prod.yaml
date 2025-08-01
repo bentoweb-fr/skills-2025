@@ -63,6 +63,8 @@ services:
     environment:
       PMA_HOST: mysql
       PMA_CONFIG_BASE64: YWxsb3dBcmJpdHJhcnlTZXJ2ZXI9dHJ1ZQo=
+      HTTPS: "on"
+      SERVER_PORT: "443"
     ports:
       - 8022:80
     links:
