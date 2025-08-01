@@ -14,6 +14,10 @@ $cfg['SessionSavePath'] = '/tmp';
 // Configuration pour les requêtes AJAX
 $cfg['AjaxEnable'] = true;
 
+// Configuration supplémentaire pour AJAX derrière un proxy
+$cfg['TrustedProxies'] = array('172.19.0.0/16');
+$cfg['AllowThirdPartyFraming'] = true;
+
 // Configuration pour éviter les timeouts
 $cfg['ExecTimeLimit'] = 300;
 $cfg['MemoryLimit'] = '512M';
@@ -40,6 +44,7 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
 }
 
 // Configuration du stockage phpMyAdmin (optionnel - supprime l'avertissement)
+$i = 1;
 $cfg['Servers'][$i]['controluser'] = '';
 $cfg['Servers'][$i]['controlpass'] = '';
 $cfg['Servers'][$i]['pmadb'] = '';
@@ -62,3 +67,8 @@ $cfg['Servers'][$i]['savedsearches'] = '';
 $cfg['Servers'][$i]['central_columns'] = '';
 $cfg['Servers'][$i]['designer_settings'] = '';
 $cfg['Servers'][$i]['export_templates'] = '';
+
+// Configuration supplémentaire pour éviter les problèmes AJAX
+$cfg['ServerDefault'] = 1;
+$cfg['MaxNavigationItems'] = 50;
+$cfg['NavigationTreePointerEnable'] = true;
