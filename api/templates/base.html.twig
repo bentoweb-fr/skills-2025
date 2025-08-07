@@ -12,8 +12,8 @@
       {% block body %}{% endblock %}
 
 
-      {# {% if app.debug %} #}
-    {# {{ render(path('_wdt', { token: app.request.attributes.get('_profiler_token') })) }} #}
-      {# {% endif %} #}
+      {# {% if app.debug %}
+              {{ render(path('_wdt', { token: app.request.attributes.get('_profiler_token') })) }}
+            {% endif %} #}
     </body>
   </html>

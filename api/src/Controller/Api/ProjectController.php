@@ -9,14 +9,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class ProjectController extends AbstractController
 {
-  #[Route('/api2/projects', name: 'api_projects')]
-  public function index(ProjectRepository $projectRepository): JsonResponse
-  {
-    return $this->json(
-      $projectRepository->findAll(),
-      200,
-      [],
-      ['groups' => 'project:read']
-    );
-  }
+  /**
+   * L'API est gérée par API Platform sur /api
+   * Voir api/config/packages/api_platform.yaml
+   */
+  // #[Route('/api2/projects', name: 'api_projects')]
+  // public function index(ProjectRepository $projectRepository): JsonResponse
+  // {
+  //   return $this->json(
+  //     $projectRepository->findAll(),
+  //     200,
+  //     [],
+  //     ['groups' => 'project:read']
+  //   );
+  // }
 }
