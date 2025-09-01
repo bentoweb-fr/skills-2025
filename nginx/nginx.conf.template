@@ -1,0 +1,132 @@
+worker_processes 1;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    # include       mime.types;
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+    sendfile on;
+    keepalive_timeout 65;
+
+    # Détection des robots d'indexation
+    map $http_user_agent $is_bot {
+        default 0;
+        ~*(Googlebot|Bingbot|Slurp|DuckDuckBot|Baiduspider|Yandex) 1;
+    }
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log debug;
+
+    # Resolver pour Docker
+    resolver 127.0.0.11 valid=30s;
+
+    # Upstream pour PHP-FPM
+    upstream php_backend {
+        server api:9000 max_fails=2 fail_timeout=10s;
+        keepalive 2;
+    }
+
+    # Par défaut, si aucun domaine ne correspond, on renvoie une 404
+    server {
+        listen 80 default_server;
+        server_name _;
+
+        return 404;
+    }
+
+    # Serveur par défaut pour les requêtes HTTPS qui ne correspondent à aucun domaine configuré
+    server {
+        listen 443 ssl default_server;
+        server_name _;
+
+        ssl_certificate /etc/nginx/ssl/certificate.crt;
+        ssl_certificate_key /etc/nginx/ssl/certificate.key;
+
+        return 404;
+    }
+
+    server {
+        listen 443 ssl;
+        server_name ${FRONT_DOMAIN};
+
+        ssl_certificate /etc/nginx/ssl/certificate.crt;
+        ssl_certificate_key /etc/nginx/ssl/certificate.key;
+
+        root /var/www/front;
+        index index.html index.htm;
+
+        # SEO bots: rediriger vers Symfony SEO via rewrite interne
+        if ($is_bot) {
+            rewrite ^ /seo last;
+        }
+
+        # SEO bots: rendu via Symfony (FastCGI)
+        location = /seo {
+            # Direct FastCGI pour route /seo
+            root /var/www/api/public;
+            fastcgi_pass php_backend;
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            include fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME /var/www/api/public/index.php;
+            fastcgi_param DOCUMENT_ROOT /var/www/api/public;
+            fastcgi_param REQUEST_URI /seo;
+            fastcgi_param PATH_INFO /seo;
+        }
+
+        location / {
+            try_files $uri $uri/ /index.html =404;
+        }
+
+        error_page 404 /404.html;
+        location = /404.html {
+            internal;
+        }
+
+    }
+
+    server {
+        listen 443 ssl;
+        server_name ${API_DOMAIN};
+
+        ssl_certificate /etc/nginx/ssl/certificate.crt;
+        ssl_certificate_key /etc/nginx/ssl/certificate.key;
+
+        root /var/www/api/public;
+        index index.php index.html index.htm;
+
+        location ~ ^/api/ {
+            if ($request_method = 'OPTIONS') {
+                return 204;
+            }
+            try_files $uri /index.php$is_args$args;
+        }
+
+        location / {
+            if ($request_method = 'OPTIONS') {
+                return 204;
+            }
+            try_files $uri /index.php$is_args$args;
+        }
+
+        location ~ ^/index\.php(/|$) {
+            try_files $uri =404;
+            fastcgi_pass php_backend;
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            include fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+            fastcgi_param DOCUMENT_ROOT $realpath_root;
+            fastcgi_connect_timeout 60s;
+            fastcgi_send_timeout 60s;
+            fastcgi_read_timeout 60s;
+            internal;
+        }
+
+        location ~ \.php$ {
+            return 404;
+        }
+    }
+
+}

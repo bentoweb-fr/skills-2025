@@ -20,7 +20,8 @@ services:
     environment:
       PUID: 1000
       PGID: 1000
-      APP_ENV: dev
+      APP_ENV: ${APP_ENV}
+      DATABASE_URL: ${API_DATABASE_URL}
     build:
       context: ./api
       dockerfile: ../docker/api/Dockerfile
@@ -45,6 +46,7 @@ services:
       PGID: 1000
       NODE_ENV: dev
       SHELL: /bin/ash # Fix chokidar-cli error
+      VITE_PORT: ${URL_FRONT_VITE_PORT}
     restart: unless-stopped
     networks:
       - skills2025_network
@@ -54,35 +56,47 @@ services:
   nginx:
     image: nginx:stable
     container_name: skills2025_nginx
+    environment:
+      - FRONT_DOMAIN=${LOCAL_FRONT_DOMAIN}
+      - API_DOMAIN=${LOCAL_API_DOMAIN}
     volumes:
       - ./api:/var/www/api
       - ./front/public:/var/www/front
       - ./nginx:/etc/nginx
     networks:
       - skills2025_network
-    ports:
-      - "80:80"
-      - "443:443"
+    # ports:
+    #   - "80:80"
+    #   - "443:443"
     depends_on:
       - api
       - front
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.skills2025.rule=Host(`skills2025.local`) || Host(`api.skills2025.local`)"
+      - "traefik.http.routers.skills2025.entrypoints=web"
+      # Pour activer SSL Let's Encrypt (si domaine public)
+      - "traefik.http.routers.skills2025.entrypoints=websecure"
+      - "traefik.http.routers.skills2025.tls.certresolver=le"
 
-  phpmyadmin:
-    image: phpmyadmin:5.2.1
-    container_name: skills2025_phpmyadmin
-    restart: always
-    ports:
-      - 8022:80
-    links:
-      - mysql:mysql
-    environment:
-      PMA_HOST: mysql
-    depends_on:
-      - mysql
-    networks:
-      - skills2025_network
+  # phpmyadmin:
+  #   image: phpmyadmin:5.2.1
+  #   container_name: skills2025_phpmyadmin
+  #   restart: always
+  #   ports:
+  #     - 8022:80
+  #   links:
+  #     - mysql:mysql
+  #   environment:
+  #     PMA_HOST: mysql
+  #   depends_on:
+  #     - mysql
+  #   networks:
+  #     - skills2025_network
 
 networks:
+  proxy:
+    external: true
   skills2025_network:
     driver: bridge
 
