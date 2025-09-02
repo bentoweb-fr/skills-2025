@@ -25,7 +25,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/api
 
 # Copier et rendre exécutable le script d'entrypoint
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker/api/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Définir l'entrypoint

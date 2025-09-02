@@ -14,7 +14,7 @@ import oxlintPlugin from "vite-plugin-oxlint";
 export default defineConfig({
   server: {
     host: "0.0.0.0",
-    port: 5173,
+    port: parseInt(process.env.VITE_PORT) || 5173,
     https: {
       key: fs.readFileSync("../nginx/ssl/skills2025.local.key"),
       cert: fs.readFileSync("../nginx/ssl/skills2025.local.crt"),

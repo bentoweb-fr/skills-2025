@@ -7,9 +7,6 @@ services:
       PUID: 1000
       PGID: 1000
       MYSQL_ROOT_PASSWORD: root
-      # MYSQL_DATABASE: skills2025
-      # MYSQL_USER: skills
-      # MYSQL_PASSWORD: password
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -21,13 +18,12 @@ services:
       PUID: 1000
       PGID: 1000
       APP_ENV: ${APP_ENV}
-      # DATABASE_URL: ${API_DATABASE_URL}
       API_DATABASE_USER: ${API_DATABASE_USER}
       API_DATABASE_PASSWORD: ${API_DATABASE_PASSWORD}
       API_DATABASE_NAME: ${API_DATABASE_NAME}
     build:
-      context: ./api
-      dockerfile: ../docker/api/Dockerfile
+      context: .
+      dockerfile: docker/api/Dockerfile
     volumes:
       - ./api:/var/www/api
     networks:
@@ -53,8 +49,10 @@ services:
     restart: unless-stopped
     networks:
       - skills2025_network
-    ports:
-      - "3000:3000"
+    # ports:
+    #   - "3000:3000"
+    expose:
+      - "3000"
 
   nginx:
     image: nginx:stable

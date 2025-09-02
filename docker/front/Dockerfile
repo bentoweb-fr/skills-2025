@@ -1,14 +1,13 @@
-FROM node:18-alpine as build
+FROM node:18-alpine
 
-# WORKDIR /app
 WORKDIR /var/www/front
 
 COPY package.json package-lock.json ./
 
-# COPY ./ ./
-
 RUN npm install
 
-# RUN npm run dev
+# Copy the entire project
+COPY . .
 
-# RUN npm run build
+# Keep the container running for potential npm commands
+CMD ["tail", "-f", "/dev/null"]
