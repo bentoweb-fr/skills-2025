@@ -64,20 +64,39 @@ services:
       - ./front/public:/var/www/front
       - ./nginx:/etc/nginx
     networks:
+      - proxy
       - skills2025_network
     # ports:
     #   - "80:80"
     #   - "443:443"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      # Router pour skills2025.local (front) - HTTP
+      - "traefik.http.routers.skills2025-front.rule=Host(`skills2025.local`)"
+      - "traefik.http.routers.skills2025-front.entrypoints=web"
+      - "traefik.http.routers.skills2025-front.service=skills2025-nginx"
+      # Router pour skills2025.local (front) - HTTPS
+      - "traefik.http.routers.skills2025-front-secure.rule=Host(`skills2025.local`)"
+      - "traefik.http.routers.skills2025-front-secure.entrypoints=websecure"
+      - "traefik.http.routers.skills2025-front-secure.service=skills2025-nginx"
+      - "traefik.http.routers.skills2025-front-secure.tls.options=default"
+      # Router pour api.skills2025.local - HTTP
+      - "traefik.http.routers.skills2025-api.rule=Host(`api.skills2025.local`)"
+      - "traefik.http.routers.skills2025-api.entrypoints=web"
+      - "traefik.http.routers.skills2025-api.service=skills2025-nginx"
+      # Router pour api.skills2025.local - HTTPS
+      - "traefik.http.routers.skills2025-api-secure.rule=Host(`api.skills2025.local`)"
+      - "traefik.http.routers.skills2025-api-secure.entrypoints=websecure"
+      - "traefik.http.routers.skills2025-api-secure.service=skills2025-nginx"
+      # - "traefik.http.routers.skills2025-api-secure.tls.options=default"
+      # Service nginx (port 80 dans le container)
+      - "traefik.http.services.skills2025-nginx.loadbalancer.server.scheme=https"
+      - "traefik.http.services.skills2025-nginx.loadbalancer.server.port=443"
     depends_on:
       - api
       - front
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.skills2025.rule=Host(`skills2025.local`) || Host(`api.skills2025.local`)"
-      - "traefik.http.routers.skills2025.entrypoints=web"
-      # Pour activer SSL Let's Encrypt (si domaine public)
-      - "traefik.http.routers.skills2025.entrypoints=websecure"
-      - "traefik.http.routers.skills2025.tls.certresolver=le"
+    # entrypoint: ["/entrypoint.sh"]
 
   # phpmyadmin:
   #   image: phpmyadmin:5.2.1
@@ -95,10 +114,10 @@ services:
   #     - skills2025_network
 
 networks:
-  proxy:
-    external: true
   skills2025_network:
     driver: bridge
+  proxy:
+    external: true
 
 volumes:
   api_volume:
