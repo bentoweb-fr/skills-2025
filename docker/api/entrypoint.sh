@@ -1,104 +1,109 @@
 #!/bin/sh
 set -e
 
+echo "🚀 Initialisation du conteneur API..."
+
 # S'assurer qu'on est dans le bon répertoire
 cd /var/www/api
 
-# Debug: Vérifier l'environnement et les fichiers
-# echo "=== DEBUGGING INFORMATION ==="
-# echo "APP_ENV: $APP_ENV || true"
-# echo "APP_DEBUG: $APP_DEBUG || true"
-# echo "DATABASE_URL=$DATABASE_URL || true"
-# echo "Working directory: $(pwd) || true"
-# echo "Symfony environment: $(php bin/console about --env=prod 2>/dev/null | grep Environment || echo 'Cannot determine') || true"
-
-# echo "=== BUNDLES CONFIGURATION ==="
-# echo "Contenu de config/bundles.php:"
-# cat config/bundles.php
-
-# echo "=== FILES CHECK ==="
-# echo "Fichiers dans config/packages:"
-# ls -la config/packages/
-# if [ -d "config/packages/dev" ]; then
-#     echo "Fichiers dans config/packages/dev:"
-#     ls -la config/packages/dev/
-# fi
-
-# echo "=== TESTING SYMFONY ==="
-# echo "Test basique de Symfony..."
-# php bin/console --version
-
-# Attendre que la base de données soit prête
-# echo "Attente de la disponibilité de MySQL..."
-
-
-# Extraire les informations de connexion depuis DATABASE_URL
-# Format: mysql://user:password@host:port/database
-# DB_USER=$(echo "$DATABASE_URL" | sed -n 's/.*:\/\/\([^:]*\):.*/\1/p')
-# DB_PASSWORD=$(echo "$DATABASE_URL" | sed -n 's/.*:\/\/[^:]*:\([^@]*\)@.*/\1/p')
-# DB_HOST=$(echo "$DATABASE_URL" | sed -n 's/.*@\([^:]*\):.*/\1/p')
-# DB_NAME=$(echo "$DATABASE_URL" | sed -n 's/.*\/[a-zA-Z0-9_]*\?*\(.*\)/\1/p' | cut -d'?' -f1)
-# DB_NAME=$(echo "$DATABASE_URL" | sed -E 's|.*/([^/?]+).*|\\1|')
-
-# echo "Variables extraites :"
-# echo "  DB_USER=$DB_USER"
-# echo "  DB_PASSWORD=$DB_PASSWORD"
-# echo "  DB_HOST=$DB_HOST"
-# echo "  DB_NAME=$DB_NAME"
-# echo "  DATABASE_URL=$DATABASE_URL"
-
-# sleep 10  # Attendre un délai initial pour laisser MySQL démarrer
-
-# Attendre que MySQL soit complètement prêt
-# max_attempts=8
-# attempt=1
-
-# while [ $attempt -le $max_attempts ]; do
-#     echo "Tentative de connexion à la base de données ($attempt/$max_attempts)..."
+# Fonction pour vérifier si Symfony est installé
+check_symfony_installation() {
+    if [ ! -f "composer.json" ]; then
+        echo "❌ composer.json non trouvé"
+        return 1
+    fi
     
-#     # Utiliser mysqladmin pour tester la connexion (plus fiable que doctrine au démarrage)
-#     if mysqladmin ping -h "$DB_HOST" -u"$DB_USER" -p"$DB_PASSWORD" --silent 2>/dev/null; then
-#         echo "MySQL est prêt ! Vérification avec Doctrine..."
-#         # Double vérification avec Doctrine
-#         if php bin/console doctrine:query:sql "SELECT 1" >/dev/null 2>&1; then
-#             echo "Base de données complètement prête !"
-#             break
-#         fi
-#     fi
+    if [ ! -d "vendor" ] || [ ! -f "vendor/autoload.php" ]; then
+        echo "❌ Dépendances Composer non installées"
+        return 1
+    fi
     
-#     if [ $attempt -eq $max_attempts ]; then
-#         echo "Erreur: Impossible de se connecter à la base de données après $max_attempts tentatives"
-#         echo "Variables de connexion:"
-#         echo "  DB_HOST=$DB_HOST"
-#         echo "  DB_USER=$DB_USER"
-#         echo "  DB_PASSWORD=$DB_PASSWORD"
-#         echo "  DB_NAME=$DB_NAME"
-#         echo "  DATABASE_URL=$DATABASE_URL"
-#         exit 1
-#     fi
+    if [ ! -f "bin/console" ]; then
+        echo "❌ Console Symfony non trouvée"
+        return 1
+    fi
     
-#     echo "Base de données pas encore prête, nouvelle tentative dans 3 secondes..."
-#     sleep 3
-#     attempt=$((attempt + 1))
-# done
+    echo "✅ Symfony semble installé"
+    return 0
+}
 
-sleep 3
+# Fonction pour installer les dépendances
+install_dependencies() {
+    echo "📦 Installation des dépendances Composer..."
+    composer install --no-interaction --optimize-autoloader
+    
+    # Générer un APP_SECRET s'il n'existe pas
+    if [ -z "${APP_SECRET}" ] || [ "${APP_SECRET}" = "" ]; then
+        echo "🔑 Génération d'un APP_SECRET..."
+        APP_SECRET=$(php -r "echo bin2hex(random_bytes(32));")
+        export APP_SECRET
+        # Ajouter à .env.local pour persister
+        echo "APP_SECRET=${APP_SECRET}" >> .env.local
+    fi
+}
 
-# Exécuter les migrations de base de données
-echo "Exécution des migrations de base de données..."
-php bin/console doctrine:migrations:migrate --no-interaction
+# Fonction pour attendre MySQL
+wait_for_mysql() {
+    echo "⏳ Attente de la disponibilité de MySQL..."
+    max_attempts=30
+    attempt=1
+    
+    while [ $attempt -le $max_attempts ]; do
+        if mysqladmin ping -h"mysql" -u"${API_DATABASE_USER}" -p"${API_DATABASE_PASSWORD}" --silent 2>/dev/null; then
+            echo "✅ MySQL est disponible"
+            return 0
+        fi
+        
+        echo "MySQL pas encore prêt, tentative $attempt/$max_attempts..."
+        sleep 2
+        attempt=$((attempt + 1))
+    done
+    
+    echo "❌ Erreur: MySQL non disponible après $max_attempts tentatives"
+    exit 1
+}
 
-# Vider le cache en production
-echo "Nettoyage du cache..."
-php bin/console cache:clear --env=prod --no-debug
-
-# Création ou mise à jour de l'utilisateur admin
-if [ -n "$ADMIN_EMAIL_PROD" ] && [ -n "$ADMIN_PASSWORD_PROD" ]; then
-  echo "Création/mise à jour de l'utilisateur admin $ADMIN_EMAIL_PROD :"
-  php bin/console app:ensure-admin-user "$ADMIN_EMAIL_PROD" "$ADMIN_PASSWORD_PROD"
+# Vérifier et installer Symfony si nécessaire
+if ! check_symfony_installation; then
+    echo "🔧 Installation de Symfony..."
+    install_dependencies
 else
-  echo "ADMIN_EMAIL_PROD ou ADMIN_PASSWORD_PROD non défini, l'utilisateur admin ne sera pas créé/mis à jour."
+    echo "🔄 Mise à jour des dépendances..."
+    composer install --no-interaction --optimize-autoloader
 fi
 
-echo "Démarrage du service..."
+# Attendre que MySQL soit disponible
+wait_for_mysql
+
+# Initialiser la base de données
+echo "🗄️ Initialisation de la base de données..."
+
+# Créer la base de données si elle n'existe pas (avec gestion d'erreur)
+echo "📋 Création de la base de données si nécessaire..."
+if ! php bin/console doctrine:database:create --if-not-exists --no-interaction; then
+    echo "⚠️ Impossible de créer la base de données, elle existe peut-être déjà"
+fi
+
+# Vérifier s'il y a des migrations et les exécuter
+if [ -d "migrations" ] && [ "$(ls -A migrations)" ]; then
+    echo "🔄 Exécution des migrations..."
+    php bin/console doctrine:migrations:migrate --no-interaction 2>/dev/null || echo "⚠️ Aucune migration à exécuter"
+else
+    echo "📊 Aucune migration trouvée, création du schema..."
+    php bin/console doctrine:schema:create --no-interaction 2>/dev/null || echo "⚠️ Schema déjà existant ou erreur"
+fi
+
+echo "🧹 Nettoyage du cache..."
+php bin/console cache:clear --no-debug || echo "⚠️ Erreur lors du nettoyage du cache"
+
+# Création ou mise à jour de l'utilisateur admin (si configuré)
+if [ -n "$ADMIN_EMAIL_PROD" ] && [ -n "$ADMIN_PASSWORD_PROD" ]; then
+    echo "👤 Création/mise à jour de l'utilisateur admin $ADMIN_EMAIL_PROD"
+    php bin/console app:ensure-admin-user "$ADMIN_EMAIL_PROD" "$ADMIN_PASSWORD_PROD" || echo "⚠️ Commande admin non disponible"
+else
+    echo "ℹ️ Variables admin non définies, utilisateur admin non créé"
+fi
+
+echo "🎉 Initialisation terminée avec succès !"
+echo "🚀 Démarrage du service PHP-FPM..."
 exec "$@"

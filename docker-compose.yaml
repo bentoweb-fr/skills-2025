@@ -21,7 +21,10 @@ services:
       PUID: 1000
       PGID: 1000
       APP_ENV: ${APP_ENV}
-      DATABASE_URL: ${API_DATABASE_URL}
+      # DATABASE_URL: ${API_DATABASE_URL}
+      API_DATABASE_USER: ${API_DATABASE_USER}
+      API_DATABASE_PASSWORD: ${API_DATABASE_PASSWORD}
+      API_DATABASE_NAME: ${API_DATABASE_NAME}
     build:
       context: ./api
       dockerfile: ../docker/api/Dockerfile
