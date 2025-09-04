@@ -90,7 +90,7 @@ services:
       - "traefik.http.routers.skills2025-api-secure.rule=Host(`api.skills2025.local`)"
       - "traefik.http.routers.skills2025-api-secure.entrypoints=websecure"
       - "traefik.http.routers.skills2025-api-secure.service=skills2025-nginx"
-      # - "traefik.http.routers.skills2025-api-secure.tls.options=default"
+      - "traefik.http.routers.skills2025-api-secure.tls.options=default"
       # Service nginx (port 80 dans le container)
       - "traefik.http.services.skills2025-nginx.loadbalancer.server.scheme=https"
       - "traefik.http.services.skills2025-nginx.loadbalancer.server.port=443"
@@ -113,6 +113,37 @@ services:
   #     - mysql
   #   networks:
   #     - skills2025_network
+
+  phpmyadmin:
+    image: phpmyadmin:5.2.1
+    container_name: skills2025_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./docker/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+      - ./docker/phpmyadmin/apache.conf:/etc/apache2/sites-available/000-default.conf
+    depends_on:
+      - mysql
+    networks:
+      - skills2025_network
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      # Router pour phpmyadmin.skills2025.local - HTTP
+      - "traefik.http.routers.skills2025-phpmyadmin.rule=Host(`phpmyadmin.skills2025.local`)"
+      - "traefik.http.routers.skills2025-phpmyadmin.entrypoints=web"
+      - "traefik.http.routers.skills2025-phpmyadmin.service=skills2025-phpmyadmin"
+      # Router pour phpmyadmin.skills2025.local - HTTPS
+      - "traefik.http.routers.skills2025-phpmyadmin-secure.rule=Host(`phpmyadmin.skills2025.local`)"
+      - "traefik.http.routers.skills2025-phpmyadmin-secure.entrypoints=websecure"
+      - "traefik.http.routers.skills2025-phpmyadmin-secure.service=skills2025-phpmyadmin"
+      - "traefik.http.routers.skills2025-phpmyadmin-secure.tls=true"
+      # Service definition
+      - "traefik.http.services.skills2025-phpmyadmin.loadbalancer.server.port=80"
 
 networks:
   skills2025_network:
